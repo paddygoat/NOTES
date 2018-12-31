@@ -1,0 +1,32 @@
+$ sudo apt-get install libi2c-dev i2c-tools
+$ sudo i2cdetect -y -r 1
+
+$ git clone https://github.com/jetsonhacks/JHLEDBackpack.git
+$ cd JHLEDBackpack
+$ cd example
+
+$ make
+$ cd JHLEDBackpack/example && make && sudo ./displayExample
+
+$ cd /home/nvidia/jetson-inference/build && make
+$ make
+
+file(GLOB inferenceSources *.cpp *.cu util/*.cpp util/camera/*.cpp util/cuda/*.cu util/display/*.cpp)
+file(GLOB inferenceIncludes *.h util/*.h util/camera/*.h util/cuda/*.h util/display/*.h)
+
+copy JHLEDBackpack.h and JHLEDBackpack.cpp into /home/nvidia/jetson-inference/detectnet-camera
+Remove #include <JHLEDBackpack.h> from JHLEDBackpack.cpp
+
+IMPORTANT: because of the use of inline functions, you *have* to use
+'-O' or some variation when you compile your program!
+
+sudo ~/jetson_clocks.sh && cd jetson-inference/build/aarch64/bin && ./detectnet-camera coco-dog
+
+
+cd /home/nvidia/jetson-inference/build && make
+cd && cd jetson-inference/build/aarch64/bin && sudo ./detectnet-camera coco-dog
+
+cd /home/nvidia/jetson-inference/build && make && cd && cd jetson-inference/build/aarch64/bin && sudo ./detectnet-camera coco-dog
+
+sudo ~/jetson_clocks.sh && cd /home/nvidia/jetson-inference/build && make && cd && cd jetson-inference/build/aarch64/bin && sudo ./detectnet-camera coco-dog
+sudo ~/jetson_clocks.sh && cd /home/nvidia/jetson-inference/build && make && cd && cd jetson-inference/build/aarch64/bin && sudo ./detectnet-camera bottleanddog

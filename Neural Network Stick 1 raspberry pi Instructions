@@ -1,0 +1,147 @@
+SDK and APi (both):
+$ sudo apt-get update
+$ sudo apt-get install
+$ git clone https://github.com/movidius/ncsdk.git
+$ cd /home/pi/ncsdk && sudo make install
+$ cd /home/pi/ncsdk && sudo make examples
+
+APi only for RPi:
+$ sudo apt-get install python-opencv
+$ pip3 install opencv-python==3.3.0.10
+$ sudo apt-get install libjasper-dev
+$ sudo apt-get install libqtgui4
+$ sudo apt-get install libqt4-test
+$ sudo apt-get install libusb-1.0-0-dev
+$ git clone https://github.com/movidius/ncsdk
+$ cd /home/pi/ncsdk/api/src
+$ make
+$ sudo make install
+
+Test the APi:
+$ git clone https://github.com/movidius/ncappzoo
+$ cd /home/pi/ncappzoo/apps/hello_ncs_py
+$ python3 hello_ncs.py   ...... This also clones the Movidius App Zoo.
+
+Run security cam app:
+$ pip install numpy
+$ cd /home/pi/ncappzoo/apps/security-cam
+$ make run
+$ python3 security-cam.py
+$ cd /home/pi/ncappzoo/apps/security-cam && python3 security-cam.py
+
+-s 16 ..... programmable 128-bit VLIW SHAVE vector processors
+-w ......... weights file (caffe only)
+-is ....... width and height eg 640 640
+-o ......... output filename eg PaddyNet.graph
+
+eg:
+mvNCCompile deploy.prototxt -w bvlc_googlenet.caffemodel -s 12 -in input -on prob -is 224 224 -o GoogLeNet.graph
+
+Caffe Layer Support:
+
+The following layers are supported in Caffe by the NCSDK. The NCSDK does not support network training, so some layers that are only required for training are not supported.
+
+$ cd /home/pi/ncappzoo/caffe/SSD_MobileNet
+$ mvNCCompile deploy.prototxt -w mobilenet_iter_73000.caffemodel -s 12 -in input -on prob -is 224 224 -o GoogLeNet.graph
+$ mvNCCompile patched_deploy.prototxt -w mobilenet_iter_73000.caffemodel -s 12 -in input -on prob -is 224 224 -o GoogLeNet.graph
+
+FileNotFoundError: [Errno 2] No such file or directory: '../../caffe/SSD_MobileNet/graph'
+
+pip3 install scikit-image
+sudo apt-get install --reinstall python3*-decorator            ?????????????
+
+You can check this by typing in $ echo $PYTHONPATH. 
+You should be able to see a file path similar to /opt/movidius/caffe/python. 
+Also make sure you are using the same account as the one you used to install the SDK. 
+Let me know if this fixes your problem. Thanks.
+
+v1.09.00 requires PYTHONPATH to include /opt/movidius/mvnc/python as well. 
+Please add:
+
+export PYTHONPATH=/opt/movidius/caffe/python:/opt/movidius/mvnc/python:$PYTHONPATH 
+
+vi /etc/.bashrc
+export PYTHONPATH=/opt/movidius/caffe/python:/opt/movidius/mvnc/python:$PYTHONPATH 
+Save and close the file: press the Esc key and type :wq.
+
+to /etc/bash.bashrc, run:
+
+source /etc/bash.bashrc
+
+and try again.
+
+I was getting a similar error on my system, the above change fixed my issue. Your issue might not be the same as mine, but it's worth a shot.
+
+nano ~/.bashrc 
+
+pi@raspberrypi:~/ncappzoo/caffe/SSD_MobileNet $ mvNCCompile deploy.prototxt -w mobilenet_iter_73000.caffemodel -s 12 -in input -on prob -is 224 224 -o GoogLeNet.graph
+mvNCCompile v02.00, Copyright @ Movidius Ltd 2016
+
+/usr/lib/python3/dist-packages/scipy/_lib/_numpy_compat.py:10: DeprecationWarning: Importing from numpy.testing.nosetester is deprecated, import from numpy.testing instead.
+  from numpy.testing.nosetester import import_nose
+/usr/lib/python3/dist-packages/scipy/stats/morestats.py:16: DeprecationWarning: Importing from numpy.testing.decorators is deprecated, import from numpy.testing instead.
+  from numpy.testing.decorators import setastest
+Traceback (most recent call last):
+  File "/usr/local/bin/mvNCCompile", line 118, in <module>
+    create_graph(args.network, args.inputnode, args.outputnode, args.outfile, args.nshaves, args.inputsize, args.weights)
+  File "/usr/local/bin/mvNCCompile", line 101, in create_graph
+    net = parse_caffe(args, myriad_config)
+  File "/usr/local/bin/ncsdk/Controllers/CaffeParser.py", line 382, in parse_caffe
+    input_bottom = net.bottom_names[inputNodeName][0]
+IndexError: list index out of range
+pi@raspberrypi:~/ncappzoo/caffe/SSD_MobileNet $ 
+
+
+
+To save you time, here is a pre-converted graph based on a Caffe Implementation  
+of the Google MobileNet SSD detection network. 
+This is a Deep Learning Model that is trained to recognize the following 20 objects: 
+
+aeroplane, bicycle, bird, boat, bottle, bus, car, cat, chair, cow, diningtable, dog, 
+horse, motorbike, person, pottedplant, sheep, sofa, train, tvmonitor
+
+Once you’ve downloaded the pre-converted graph file you can place it in the
+
+~/workspace/ncappzoo/caffe/SSD_MobileNet/ 
+directory on your Raspberry Pi. 
+Remember to call this file ‘graph’ with no suffix (and unzip it if Dropbox has added a "zip" suffix)! 
+Your graph is now ready for use by those Movidius App Zoo examples that use MobileNet SSD.
+
+RUN:
+
+$ cd /home/pi/ncappzoo/apps/security-cam
+$ make run
+
+$ cd /home/pi/ncappzoo/apps/security-cam && make run
+
+$ cd && cd /home/pi/ncappzoo/apps/security-cam && python3 security-cam.py
+
+Traceback (most recent call last):
+  File "security-cam.py", line 24, in <module>
+    from pySX127x_master import Tegwyns_LoRa_Beacon
+  File "/home/pi/ncappzoo/apps/security-cam/pySX127x_master/Tegwyns_LoRa_Beacon.py", line 5, in <module>
+    from SX127x.LoRa import *
+ImportError: No module named 'SX127x'
+
+I created a __init__.py file in: /home/pi/ncappzoo/apps/security-cam/pySX127x_master and it contains __all__ = ['pySX127x_master'].
+The __init__.py file inside SX127x contains: __all__ = ['SX127x']
+
+$ cd && cd /home/pi/ncappzoo/apps/securityCam/pySX127x_master && python3 Tegwyns_LoRa_Beacon_01.py
+$ cd && cd /home/pi/ncappzoo/apps/securityCam/pySX127x_master && python3 Tegwyns_LoRa_Beacon.py
+$ cd && cd /home/pi/ncappzoo/apps/securityCam && python3 security_cam.py
+
+$ raspistill -o image.jpg
+
+$ sudo apt-get install python3-picamera
+$ pip3 install "picamera[array]"
+$ pip3 install imutils
+
+
+/media/pi/KINGSTON
+
+$ cd && cd /home/pi/ncappzoo/apps/securityCam && python3 security_cam.py
+
+
+
+
+

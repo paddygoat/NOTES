@@ -1,0 +1,56 @@
+$ cd /media/paddygoat/C999-F05F/images/Wasp_images_04_SMALL
+$ cd /media/paddygoat/C999-F05F/images/Wasp_images_01/RESIZED
+
+$ rename -n 's/.+/our $i; sprintf("W%05d.jpg", 1+$i++)/e' *
+
+remove the -n to make permanent changes:
+$ rename 's/.+/our $i; sprintf("B%05d.jpg", 1+$i++)/e' *
+$ rename 's/.+/our $i; sprintf("B%05d.txt", 1+$i++)/e' *
+$ rename 's/.+/our $i; sprintf("C%05d.jpg", 1+$i++)/e' *
+$ rename 's/.+/our $i; sprintf("D%05d.jpg", 1+$i++)/e' *
+$ rename 's/.+/our $i; sprintf("E%05d.jpg", 1+$i++)/e' *
+$ rename 's/.+/our $i; sprintf("F%05d.jpg", 1+$i++)/e' *
+$ rename 's/.+/our $i; sprintf("G%05d.jpg", 1+$i++)/e' *
+$ rename 's/.+/our $i; sprintf("H%05d.jpg", 1+$i++)/e' *
+$ rename 's/.+/our $i; sprintf("IF%05d.jpg", 1+$i++)/e' *
+$ rename 's/.+/our $i; sprintf("J%05d.png", 1+$i++)/e' *
+
+modify file dimensions using imagemagick:
+$ mogrify -resize 640x640 *.jpg
+$ mogrify -resize 640x640! *.jpg          ..... forces size change.
+
+Print file sizes in terminal:
+find /some/path -type f -print0 | du --files0-from=- -0h | sort -rzh | tr '\0' '\n'
+find /media/paddygoat/C999-F05F/images/Wasp_images_01/TEST -type f -print0 | du --files0-from=- -0h | sort -rzh | tr '\0' '\n'
+
+$ cd /media/paddygoat/C999-F05F/images/my_wasp_images_cropped_twice && mogrify -resize 640x640! *.jpg 
+
+$ cd /media/paddygoat/C999-F05F/images/wasps_from_video_01/cropped && mogrify -resize 640x640! *.jpg 
+
+
+$ cd /media/paddygoat/C999-F05F/images/TEST/images/
+
+**********NB maximum image size is dictated by size of labelling tool screen *****************
+
+$ convert -rotate 90 *.jpg 
+$ mogrify -black-threshold 1 *.jpg
+$ mogrify -noise 10 *.jpg
+$ mogrify -sepia-tone 80 *.jpg
+$ mogrify -shadow geometry
+$ mogrify -shade 2 *.jpg	shade the image using a distant light source
+$ mogrify -solarize 20 *.jpg
+$ mogrify -transpose *.jpg
+$ mogrify -transverse *.jpg
+$ mogrify -white-threshold value
+$ mogrify -tint 5 *.jpg
+$ mogrify -format jpg *.png
+$ mogrify -format png *.jpg
+$ mogrify -flop *.jpg	flip image in the horizontal direction
+
+cd /home/paddygoat/Desktop/new_wasp_images_01/
+cd /home/paddygoat/Desktop/new_wasp_images_02/done/
+
+$ cd && cd /home/paddygoat/euclidaug/euclid-master/ && python euclid.py
+
+extract a tar.gz file:
+$ tar -xf filename.tar.gz

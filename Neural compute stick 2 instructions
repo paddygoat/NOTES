@@ -1,0 +1,152 @@
+https://software.intel.com/en-us/neural-compute-stick/get-started    ..... instructions page
+https://software.seek.intel.com/openvino-toolkit   ...... download page
+
+sudo apt-get update && sudo apt-get upgrade
+cd ~/Downloads
+
+tar xvf l_openvino_toolkit_p_2018.5.445.tgz
+cd l_openvino_toolkit_p_2018.5.445
+sudo -E ./install_cv_sdk_dependencies.sh
+sudo ./install_GUI.sh
+
+sudo -E ./install_cv_sdk_dependencies.sh
+
+cd ~/Downloads
+
+Be careful to copy this code block properly:
+
+cat <<EOF > 97-usbboot.rules
+SUBSYSTEM=="usb", ATTRS{idProduct}=="2150", ATTRS{idVendor}=="03e7", GROUP="users", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1"
+SUBSYSTEM=="usb", ATTRS{idProduct}=="2485", ATTRS{idVendor}=="03e7", GROUP="users", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1"
+SUBSYSTEM=="usb", ATTRS{idProduct}=="f63b", ATTRS{idVendor}=="03e7", GROUP="users", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1"
+EOF
+
+
+sudo cp 97-usbboot.rules /etc/udev/rules.d/
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+sudo ldconfig
+rm 97-usbboot.rules
+
+error: /sbin/ldconfig.real: /opt/intel/mediasdk/lib64/libmfx.so.1 is not a symbolic link
+
+sudo usermod -a -G users "$(whoami)"
+cat <<EOF > 97-myriad-usbboot.rules
+SUBSYSTEM=="usb", ATTRS{idProduct}=="2150", ATTRS{idVendor}=="03e7", GROUP="users", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1"
+SUBSYSTEM=="usb", ATTRS{idProduct}=="2485", ATTRS{idVendor}=="03e7", GROUP="users", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1"
+SUBSYSTEM=="usb", ATTRS{idProduct}=="f63b", ATTRS{idVendor}=="03e7", GROUP="users", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1"
+EOF
+sudo cp 97-myriad-usbboot.rules /etc/udev/rules.d/
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+sudo ldconfig
+rm 97-myriad-usbboot.rules
+OR:
+cd <INSTALL_DIR>/install_dependencies/
+./install_NCS_udev_rules.sh
+cd /opt/intel/computer_vision_sdk/install_dependencies && ./install_NCS_udev_rules.sh
+
+###### Must be in computer_vision_sdk_2018.5.445 folder !!!!!
+
+Please setup your environment. Run 'source <OVINO_INSTALLDIR>/bin/setupvars.sh'.
+cd /opt/intel/computer_vision_sdk_2018.5.445/bin/ && ./setupvars.sh
+
+sudo apt install libusb-1.0-0 libboost-program-options1.58.0 libboost-thread1.58.0 libboost-filesystem1.58.0 libssl1.0.0 libudev1 libjson-c2
+
+Error: /sbin/ldconfig.real: /opt/intel/mediasdk/lib64/libmfxhw64.so.1 is not a symbolic link
+sudo usermod -a -G users "$(whoami)"
+
+
+source /opt/intel/computer_vision_sdk/bin/setupvars.sh
+vi etc/.bashrc
+source /opt/intel/computer_vision_sdk/bin/setupvars.sh
+
+..... Could not complete this step
+
+cd /opt/intel/computer_vision_sdk/deployment_tools/model_optimizer/install_prerequisites
+sudo ./install_prerequisites.sh
+
+
+
+TEST with image calssification:
+
+cd /opt/intel/computer_vision_sdk/deployment_tools/model_optimizer/install_prerequisites
+./install_prerequisites.sh
+
+REBOOT !!!
+
+cd /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/demo/
+./demo_squeezenet_download_convert_run.sh
+
+cd /opt/intel/computer_vision_sdk/deployment_tools/demo
+./demo_squeezenet_download_convert_run.sh -d MYRIAD
+./demo_squeezenet_download_convert_run.sh -d CPU
+....... Only works in CPU mode.
+
+
+Labels:
+cd /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/person-vehicle-bike-detection-crossroad-0078/FP16/
+sudo cp /home/tegwyn/Desktop/person-vehicle-bike-detection-crossroad-0078.labels /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/person-vehicle-bike-detection-crossroad-0078/FP16/
+
+sudo cat > labels.labels
+ls -l labels.labels
+vi labels.labels
+
+
+cd /home/tegwyn/inference_engine_samples/interactive_face_detection_demo
+make install
+..... Now got to: inference_engine_samples/intel64/Release
+cd ~/inference_engine_samples/intel64/Release
+./interactive_face_detection_demo.sh -d MYRIAD
+
+Face, Emotion, Age, Gender, and Pose Detection example:
+
+
+
+./interactive_face_detection_demo -d MYRIAD -m /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-retail-0004/FP16/face-detection-retail-0004.xml -d_ag MYRIAD -m_ag /opt/intel/computer_vision_sdk/deployment_tools/intel_models/age-gender-recognition-retail-0013/FP16/age-gender-recognition-retail-0013.xml -d_em MYRIAD -m_em /opt/intel/computer_vision_sdk/deployment_tools/intel_models/emotions-recognition-retail-0003/FP16/emotions-recognition-retail-0003.xml -d_hp MYRIAD -m_hp /opt/intel/computer_vision_sdk/deployment_tools/intel_models/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml    ............ WORKS !!!!!!
+
+./interactive_face_detection_demo -d MYRIAD -m /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/face-detection-retail-0004/FP16/face-detection-retail-0004.xml -d_ag MYRIAD -m_ag /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/age-gender-recognition-retail-0013/FP16/age-gender-recognition-retail-0013.xml -d_em MYRIAD -m_em /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/emotions-recognition-retail-0003/FP16/emotions-recognition-retail-0003.xml -d_hp MYRIAD -m_hp /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml  ............ WORKS on new install.
+
+computer_vision_sdk_2018.5.445
+
+cd /opt/intel/computer_vision_sdk/deployment_tools/intel_models/head-pose-estimation-adas-0001/FP16/
+cd opt/intel/computer_vision_sdk/deployment_tools/intel_models/
+
+
+[ ERROR ] Error loading xmlfile: opt/intel/computer_vision_sdk/deployment_tools/intel_models/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml
+
+/home/tegwyn/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-retail-0004/FP16/face-detection-retail-0004.xml
+
+/opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-retail-0004/FP16/face-detection-retail-0004.xml
+
+Person detector:
+
+cd /home/tegwyn/inference_engine_samples/object_detection_sample_ssd
+make install
+..... Now got to: inference_engine_samples/intel64/Release
+cd ~/inference_engine_samples/intel64/Release
+./object_detection_demo_ssd_async -d MYRIAD -i cam -m /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/person-detection-retail-0013/FP16/person-detection-retail-0013.xml
+
+
+cd /home/tegwyn/inference_engine_samples/human_pose_estimation_demo
+make install
+..... Now got to: inference_engine_samples/intel64/Release
+cd ~/inference_engine_samples/intel64/Release
+..... Then:
+./human_pose_estimation_demo -d MYRIAD -i cam -m /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/human-pose-estimation-0001/FP16/human-pose-estimation-0001.xml
+.... FAILED !!!!!
+
+cd /home/tegwyn/inference_engine_samples/object_detection_demo_ssd_async/
+make install
+cd ~/inference_engine_samples/intel64/Release
+./object_detection_demo_ssd_async -d MYRIAD -i cam -m /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/person-vehicle-bike-detection-crossroad-0078/FP16/person-vehicle-bike-detection-crossroad-0078.xml
+
+source /opt/intel/computer_vision_sdk/bin/setupvars.sh
+
+
+
+
+
+
+
+

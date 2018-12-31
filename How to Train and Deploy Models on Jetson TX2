@@ -1,0 +1,167 @@
+This text assumes all the relevant software is already installed on the Jetson.
+
+Prerequisites: 
+Jetson TX2 flashed with JetPack 3.3.
+Caffe version: 0.15.14
+DIGITS version: 6.1.1
+$ head -1 /etc/nv_tegra_release   .............
+R28 (release), REVISION: 2.1, = L4T 28.2.1
+TensorRT version 4.0.2
+
+
+Check that all software is installed correctly by using the pre-installed dog detect model that comes with Jetpack by running this in terminal:
+
+$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && sudo ./detectnet-camera coco-dog
+
+$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && sudo ./detectnet-camera ped-100
+It will take a few minutes to load up before the camera footage appears.
+
+Turn on the DIGITS server:
+
+$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd digits && export CAFFE_ROOT=/home/nvidia/caffe && ./digits-devserver
+
+/home/nvidia/Link to bin/wasp_epoch_100_02/snapshot_iter_9500.caffemodel
+
+Now we're going to build the model using actual images of dogs with their associated text files:
+
+In browser naviate to http://localhost:5000/
+    
+Importing the Detection Dataset into DIGITS:
+> Datasets > Images > Object Detection
+
+Training image folder:  /media/nvidia/2037-F6FA/dogandbottle/train/images/dogandbottle
+Training label folder:  /media/nvidia/2037-F6FA/dogandbottle/train/labels/dogandbottle
+Validation image folder: /media/nvidia/2037-F6FA/dogandbottle/val/images/dogandbottle
+Validation label folder: /media/nvidia/2037-F6FA/dogandbottle/val/labels/dogandbottle
+
+Training image folder:  /media/nvidia/2037-F6FA/coco/train/images/dog
+Training label folder:  /media/nvidia/2037-F6FA/coco/train/labels/dog
+Validation image folder: /media/nvidia/2037-F6FA/coco/val/images/dog
+Validation label folder: /media/nvidia/2037-F6FA/coco/val/labels/dog
+
+Training image folder:  /media/nvidia/2037-F6FA/wasp/train/images
+Training label folder:  /media/nvidia/2037-F6FA/wasp/train/labels
+Validation image folder: /media/nvidia/2037-F6FA/wasp/val/images
+Validation label folder: /media/nvidia/2037-F6FA/wasp/val/labels
+
+Pad image (Width x Height): 640 x 640
+Custom classes: dontcare, dog
+Group Name: MS-COCO
+Dataset Name: coco-dog
+
+> Create
+> Home > Models > Images > Object Detection
+
+> Select Dataset: coco-dog
+Training epochs = 16
+Snapshot interval (in epochs) = 16
+Validation interval (in epochs) = 16
+batch size = 2
+batch accumulation = 5  (for training on Jetson TX2)
+Subtract Mean: none
+Solver Type: Adam
+Base learning rate: 2.5e-05
+
+> Show advanced learning options
+Policy: Exponential Decay
+Gamma: 0.99
+
+
+Specifying the DetectNet Prototxt:
+> Custom Network > Caffe
+Find the DetectNet prototxt located at /home/nvidia/jetson-inference/data/networks/detectnet.prototxt in the repo.
+Copy the text and paste it into the large Caffe text box.
+
+> Pretrained Model = /home/nvidia/jetson-inference/data/networks/bvlc_googlenet.caffemodel
+>Create
+Location of epoch snapshots: /home/nvidia/digits/digits/jobs
+You should see the model being created through a series of epochs. Make a note of the final epoch.
+
+Navigate to /home/nvidia/digits/digits/jobs and open the latest job folder and check it has the 'snapshot_iter_*****.caffemodel' files in it. Make a note of the highest '*****' number then copy and paste the folder into here for deployment: /home/nvidia/jetson-inference/build/aarch64/bin.
+
+Rename the folder to reflect the number of epochs that it passed, eg myDogModel_epoch_30.
+
+For Jetson TX2, at the end of deploy.prototxt, delete the layer named cluster:
+
+layer {
+  name: "cluster"
+  type: "Python"
+  bottom: "coverage"
+  bottom: "bboxes"
+  top: "bbox-list"
+  python_param {
+    module: "caffe.layers.detectnet.clustering"
+    layer: "ClusterDetections"
+    param_str: "640, 640, 16, 0.6, 2, 0.02, 22, 1"
+  }
+}
+Open terminal and run, changing the '*****' number accordingly:
+
+$ cd && cd jetson-inference/build/aarch64/bin && NET=myDogModel_epoch_30 && sudo ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_*****.caffemodel \
+
+$ cd && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=wasp_epoch_32 && sudo ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_14464.caffemodel \
+
+$ cd && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=wasp_epoch_100_02 && sudo ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_9500.caffemodel \
+
+$ cd && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=wasp_epoch_100F && sudo ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_11680.caffemodel \
+
+$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=wasp_epoch_200F && sudo ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_26280.caffemodel \
+
+$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=wasp_epoch_100H && sudo ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_21100.caffemodel \
+
+$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=wasp_AWS_000025 && sudo ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_63300.caffemodel \
+
+$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=wasp_iter_75300_I01 && sudo ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_75300.caffemodel \
+
+$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=wasp_iter_35900_December2018 && sudo ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_35900.caffemodel \
+
+$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=TRAIN227 && sudo ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_71800.caffemodel \
+
+
+***** Hit return twice ****** and you'll see various messges including: 
+
+[TRT]  attempting to open cache file dogPoo_epoch_8/snapshot_iter_3088.caffemodel.2.tensorcache
+[TRT]  cache file not found, profiling network model
+
+This is not an error!
+
+If you've got:
+[TRT]  building CUDA engine
+Then all is good - just wait a few minutes for it to complete and then the camera should activate.
+
+Now find / borrow a dog and test for bounding boxes!
+
+It may well be that training over just 16 epochs is not good enough. There's no need to start from scratch:
+
+> Home > Models > Images > Object Detection   ...... select the previous model
+
+instead of using the pre-trained network under the custom networks tab, erase this 'previous model' and click the 'pre-trained networks' tab and click the latest (the top of the column of options) model.
+
+/home/nvidia/Desktop/Link to jobs/20181118-124113-4813/snapshot_iter_2920.caffemodel
+
+
+
+
+
+
+

@@ -1,0 +1,1 @@
+$ sudo ~/jetson_clocks.sh && cd digits && export CAFFE_ROOT=/home/nvidia/caffe && ./digits-devserver

@@ -1,0 +1,275 @@
+@Requirements:
+Jetson TX2 flashed with JetPack 3.3.
+DIGITS tutorial must be completed (as far as possible) to get training data etc ?????? Maybe! Check out here:
+/home/nvidia/jetson-inference/data for net binaries eg.bvlc_alexnet.caffemodel
+(https://github.com/NVIDIA/DIGITS/blob/master/docs/GettingStarted.md)
+
+https://github.com/dusty-nv/jetson-inference
+
+$ sudo apt-get install git cmake
+$ sudo apt-get install doxygen
+
+$ git clone https://github.com/dusty-nv/jetson-inference
+$ cd jetson-inference
+$ mkdir build
+$ cd build
+$ cmake ../
+
+Could NOT find Doxygen (missing:  DOXYGEN_EXECUTABLE) 
+$ make
+
+$ cd jetson-inference/build/aarch64/bin
+$ ./imagenet-console orange_0.jpg output_0.jpg
+$ ./imagenet-console granny_smith_1.jpg output_1.jpg
+$ ./imagenet-camera googlenet
+
+Turn on the DIGITS server:
+$ sudo ~/jetson_clocks.sh && cd digits && export CAFFE_ROOT=/home/nvidia/caffe && ./digits-devserver
+
+Demo the camera:
+$ sudo ~/jetson_clocks.sh && cd jetson-inference/build/aarch64/bin && ./imagenet-camera googlenet
+
+
+$ pip install Cython
+$ git clone https://github.com/pdollar/coco.git
+$ cd coco/PythonAPI
+$ make
+$ sudo make install
+$ sudo python setup.py install
+
+$ cd /home/nvidia/jetson-inference/tools/
+$ python coco2kitti.py
+
+$ cd /media/nvidia/3A888DE9888DA44B
+$ tar -xzvf coco.tar.gz 
+
+Training image folder:  /media/nvidia/3A888DE9888DA44B/coco/train/images/dog
+Training label folder:  /media/nvidia/3A888DE9888DA44B/coco/train/labels/dog
+Validation image folder: /media/nvidia/3A888DE9888DA44B/coco/val/images/dog
+Validation label folder: /media/nvidia/3A888DE9888DA44B/coco/val/labels/dog
+Pad image (Width x Height): 640 x 640
+Custom classes: dontcare, dog
+Group Name: MS-COCO
+Dataset Name: coco-dog
+
+Select Dataset: coco-dog
+Training epochs: 100
+Subtract Mean: none
+Solver Type: Adam
+Base learning rate: 2.5e-05
+Select Show advanced learning options
+Policy: Exponential Decay
+Gamma: 0.99
+
+Memory	8 GB 
+GPU	NVIDIA Pascal™, 256 CUDA cores
+batch size = 5 ............. I changed this to 2
+batch accumulation = 2 ..... I changed this to 5
+/home/nvidia/jetson-inference/data/networks/bvlc_googlenet.caffemodel
+https://github.com/dusty-nv/jetson-inference/blob/master/data/networks/detectnet.prototxt
+Group Name MS-COCO
+Model Name DetectNet-COCO-Dog
+
+
+
+/media/nvidia/3A888DE9888DA44B/coco/val/images/dog/069959.jpg
+/media/nvidia/3A888DE9888DA44B/coco/train/images/dog/003623.jpg
+
+/home/nvidia/jetson-inference/data/networks/DetectNet-COCO-Dog/
+
+Job Directory
+/home/nvidia/digits/digits/jobs/20181003-090825-0308
+
+sudo ~/jetson_clocks.sh
+
+$ cd jetson-inference/build/aarch64/bin && ./detectnet-camera coco-bottle    # detect bottles/soda cans in the camera
+$ cd jetson-inference/build/aarch64/bin && ./detectnet-camera coco-dog       # detect dogs in the camera
+$ cd jetson-inference/build/aarch64/bin && ./detectnet-camera multiped       # run using multi-class pedestrian/luggage detector
+$ sudo ~/jetson_clocks.sh && cd jetson-inference/build/aarch64/bin && ./detectnet-camera pednet         # run using original single-class pedestrian detector
+$ cd jetson-inference/build/aarch64/bin && ./detectnet-camera facenet        # run using facial recognition network
+$ cd jetson-inference/build/aarch64/bin && ./detectnet-camera                # by default, program will run using multiped
+
+sudo ~/jetson_clocks.sh && cd jetson-inference/build/aarch64/bin && ./detectnet-camera coco-dog
+
+    
+Turn on the DIGITS server:
+$ sudo ~/jetson_clocks.sh && cd digits && export CAFFE_ROOT=/home/nvidia/caffe && ./digits-devserver
+In browser naviate to http://localhost:5000/
+    
+Importing the Detection Dataset into DIGITS:
+> Datasets > Images > Object Detection
+
+Training image folder:  /media/nvidia/2037-F6FA/coco/train/images/dog
+Training label folder:  /media/nvidia/2037-F6FA/coco/train/labels/dog
+Validation image folder: /media/nvidia/2037-F6FA/coco/val/images/dog
+Validation label folder: /media/nvidia/2037-F6FA/coco/val/labels/dog
+Pad image (Width x Height): 640 x 640
+Custom classes: dontcare, dog
+Group Name: MS-COCO
+Dataset Name: coco-dog
+
+> Create
+> Home > Models > Images > Object Detection
+
+> Select Dataset: coco-dog
+Training epochs: 100
+Subtract Mean: none
+Solver Type: Adam
+Base learning rate: 2.5e-05
+> Show advanced learning options
+Policy: Exponential Decay
+Gamma: 0.99
+batch size = 2
+batch accumulation = 5  (for training on Jetson TX2)
+
+Specifying the DetectNet Prototxt:
+> Custom Network > Caffe
+The DetectNet prototxt is located at /home/nvidia/jetson-inference/data/networks/detectnet.prototxt in the repo.
+
+> Pretrained Model = /home/nvidia/jetson-inference/data/networks/bvlc_googlenet.caffemodel
+>Create
+Location of epoch snapshots: /home/nvidia/digits/digits/jobs
+You should see the model being created through a series of epochs. Make a note of the final epoch.
+
+Navigate to /home/nvidia/digits/digits/jobs and open the latest job folder and check it has the 'snapshot_iter_*****.caffemodel' files in it. Make a note of the highest '*****' number then copy and paste the folder into here for deployment: /home/nvidia/jetson-inference/build/aarch64/bin.
+
+Rename the folder to reflect the number of epochs that it passed, eg myDogModel_epoch_30.
+
+For Jetson TX2, at the end of deploy.prototxt, delete the layer named cluster:
+
+layer {
+  name: "cluster"
+  type: "Python"
+  bottom: "coverage"
+  bottom: "bboxes"
+  top: "bbox-list"
+  python_param {
+    module: "caffe.layers.detectnet.clustering"
+    layer: "ClusterDetections"
+    param_str: "640, 640, 16, 0.6, 2, 0.02, 22, 1"
+  }
+}
+
+Open terminal and run, changing the '*****' number accordingly:
+
+$ cd jetson-inference/build/aarch64/bin && NET=myDogModel_epoch_30 && ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_*****.caffemodel \
+
+Hit return twice and you'll see various messges including: 
+
+[TRT]  attempting to open cache file dogPoo_epoch_8/snapshot_iter_3088.caffemodel.2.tensorcache
+[TRT]  cache file not found, profiling network model
+
+This is not an error!
+
+If you've got:
+[TRT]  building CUDA engine
+Then all is good - just wait a few minutes for it to complete and then the camera should activate.
+
+Now find / borrow a dog and test for bounding boxes!
+
+Test:
+Select Visualization Method > Bounding Boxes
+Select Inference form > Object Detection ?
+Test a single image: 
+/media/nvidia/2037-F6FA/coco/val/images/dog/069959.jpg
+/media/nvidia/2037-F6FA/coco/train/images/dog/003623.jpg
+
+$ cd jetson-inference/build/aarch64/bin
+$ NET=20181013-134114-3f60_epoch_4
+$ ./detectnet-console dog_0.jpg output_0.jpg \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_1544.caffemodel \
+--input_blob=data \ 
+--output_cvg=coverage \
+--output_bbox=bboxes
+
+
+ERROR:
+nvidia@tegra-ubuntu:~/jetson-inference/build/aarch64/bin$ ./detectnet-console dog_0.jpg output_0.jpg \
+> --prototxt=$NET/deploy.prototxt \
+> --model=$NET/snapshot_iter_1544.caffemodel \
+> --input_blob=data \ 
+detectnet-console
+  args (7):  0 [./detectnet-console]  1 [dog_0.jpg]  2 [output_0.jpg]  3 [--prototxt=20181013-134114-3f60_epoch_4/deploy.prototxt]  4 [--model=20181013-134114-3f60_epoch_4/snapshot_iter_1544.caffemodel]  5 [--input_blob=data]  6 [ ]  
+
+
+detectNet -- loading detection network model from:
+          -- prototxt    20181013-134114-3f60_epoch_4/deploy.prototxt
+          -- model       20181013-134114-3f60_epoch_4/snapshot_iter_1544.caffemodel
+          -- input_blob  'data'
+          -- output_cvg  'coverage'
+          -- output_bbox 'bboxes'
+          -- mean_pixel  0.000000
+          -- threshold   0.500000
+          -- batch_size  2
+
+[TRT]  TensorRT version 4.0.2
+[TRT]  attempting to open cache file 20181013-134114-3f60_epoch_4/snapshot_iter_1544.caffemodel.2.tensorcache
+[TRT]  cache file not found, profiling network model
+[TRT]  platform has FP16 support.
+[TRT]  loading 20181013-134114-3f60_epoch_4/deploy.prototxt 20181013-134114-3f60_epoch_4/snapshot_iter_1544.caffemodel
+[TRT]  CaffeParser: Could not open file 20181013-134114-3f60_epoch_4/snapshot_iter_1544.caffemodel
+[TRT]  CaffeParser: Could not parse model file
+[TRT]  failed to parse caffe network
+failed to load 20181013-134114-3f60_epoch_4/snapshot_iter_1544.caffemodel
+detectNet -- failed to initialize.
+detectnet-console:   failed to initialize detectNet
+nvidia@tegra-ubuntu:~/jetson-inference/build/aarch64/bin$ --output_cvg=coverage \
+> --output_bbox=bboxes
+
+
+$ cd jetson-inference/build/aarch64/bin
+$ NET=dogpoo_epoch_100
+$ ./detectnet-console dog_0.jpg output_0.jpg \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_38600.caffemodel \
+--input_blob=data \ 
+--output_cvg=coverage \
+--output_bbox=bboxes
+
+is the file snapshot_iter_38600.caffemodel located in ~/jetson-inference/build/aarch64/bin/dogpoo_epoch_100/ and has fine permissions ?
+
+sudo ~/jetson_clocks.sh && cd jetson-inference/build/aarch64/bin && ./detectnet-camera coco-dog
+
+$ cd jetson-inference/build/aarch64/bin
+$ NET=dogpoo_epoch_100
+$ ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_38600.caffemodel \
+
+$ cd jetson-inference/build/aarch64/bin
+$ NET=dogPoo4_epoch_4
+$ ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_1544.caffemodel \
+
+$ cd jetson-inference/build/aarch64/bin && NET=dogPoo4_epoch_4 && ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_1544.caffemodel \
+
+$ cd jetson-inference/build/aarch64/bin && NET=dogPoo_epoch_8 && ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_3088.caffemodel \
+
+$ cd jetson-inference/build/aarch64/bin && NET=dogPoo_epoch_16 && ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_6176.caffemodel \
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

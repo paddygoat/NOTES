@@ -1,0 +1,158 @@
+Requirements:
+Jetson TX2 flashed with JetPack 3.3.
+
+# Download new list of packages
+sudo apt-get update
+
+sudo apt-get install --no-install-recommends git graphviz python-dev python-flask python-flaskext.wtf python-gevent python-h5py python-numpy python-pil python-pip python-scipy python-tk
+
+               ------------------DONE------------------------------
+
+sudo apt-get install autoconf automake libtool curl make g++ git python-dev python-setuptools unzip
+
+               ------------------DONE------------------------------
+
+DIGITS is currently (september 2018) compatiable with Protobuf 3.2.x:
+
+export PROTOBUF_ROOT=~/protobuf
+cd $PROTOBUF_ROOT
+git clone https://github.com/google/protobuf.git $PROTOBUF_ROOT -b '3.2.x'
+cd $PROTOBUF_ROOT
+./autogen.sh
+./configure
+make "-j$(nproc)"
+sudo make install
+sudo ldconfig
+cd python
+sudo python setup.py install --cpp_implementation
+
+              ------------------ DONE -------------------------
+
+cd
+sudo apt-get install --no-install-recommends build-essential cmake git gfortran libatlas-base-dev libboost-filesystem-dev libboost-python-dev
+               ----------- DONE -----------------------------------
+sudo apt-get install libboost-system-dev libboost-thread-dev libgflags-dev libgoogle-glog-dev libhdf5-serial-dev libleveldb-dev liblmdb-dev libopencv-dev libsnappy-dev python-all-dev python-dev python-h5py python-matplotlib python-numpy python-opencv python-pil python-pip python-pydot python-scipy python-skimage python-sklearn
+
+              ----------------- DONE --------------------------
+
+export CAFFE_ROOT=~/caffe
+git clone https://github.com/NVIDIA/caffe.git $CAFFE_ROOT -b 'caffe-0.15'
+
+              ------------- Done ------------------------------
+
+sudo python -m pip uninstall pip && sudo apt install python-pip --reinstall          
+...... This downgrades pip !!!!!
+pip install Cython
+pip install -r $CAFFE_ROOT/python/requirements.txt --user
+
+              ----------------- DONE with errors --------------
+
+sudo apt-get install python-dev build-essential
+RuntimeError: Cython >= 0.23 is required to build scikit-image from git checkout
+?????????????   pip install --upgrade pip
+
+sudo apt-get install protobuf-compiler
+cd /home/nvidia/protobuf
+cmake -DBLAS=open
+
+Please edit file $CAFFE_ROOT/3rdparty/cub/host/mutex.cuh
+line124: --- #ifndef __arm__
+line124: +++ #if !defined(__arm__) && !defined(__aarch64__)
+
+And make it again
+$ make clean && make -j4
+
+cd $CAFFE_ROOT
+mkdir build
+cd build
+cmake ..    
+ --------------   originally Could NOT find Protobuf (missing: PROTOBUF_LIBRARY PROTOBUF_INCLUDE_DIR) but now corrected
+make -j"$(nproc)"               
+--------------- /usr/include/c++/5/typeinfo:39:37: error: expected ‘}’ before end of line
+
+	I solved this problem by modifying CMakeList.txt
+	Orginal:
+
+	# ---[ Flags
+	if(UNIX OR APPLE)
+	  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wall")
+	endif()if()
+
+	Modified:
+
+	# ---[ Flags
+	if(UNIX OR APPLE)
+ 	 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wall -std=c++11")
+	endif()if()
+
+make install
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> THIS IS WHERE I GOT TO !!!!!!!!!!!!!!!!!
+
+pip uninstall matplotlib --user
+pip3 install -U matplotlib --user
+
+(Matplotlib 3.0+ does not support Python 2.x, 3.0, 3.1, 3.2, 3.3, or 3.4.
+    Beginning with Matplotlib 3.0, Python 3.5 and above is required.)
+
+DIGITS_ROOT=~/digits
+git clone https://github.com/NVIDIA/DIGITS.git $DIGITS_ROOT
+
+pip install -r $DIGITS_ROOT/requirements.txt --user
+pip install -e $DIGITS_ROOT --user
+
+export CAFFE_ROOT=/home/nvidia/caffe
+export PYTHONPATH=/home/nvidia/caffe/python:$PYTHONPATH
+
+
+Starting the server:
+
+cd digits
+export CAFFE_ROOT=/home/nvidia/caffe
+./digits-devserver
+
+sudo ~/jetson_clocks.sh && cd digits && export CAFFE_ROOT=/home/nvidia/caffe && ./digits-devserver
+
+
+Now paste 'http://localhost:5000/' into browser url tab. (Starts a server at http://localhost:5000/)
+
+Now refer to: https://github.com/NVIDIA/DIGITS/blob/master/docs/GettingStarted.md
+or: https://github.com/dusty-nv/jetson-inference
+
+python -m digits.download_data mnist ~/mnist
+sudo ~/jetson_clocks.sh          .............. activates the fan !!!
+sudo ~/jetson_clocks.sh --show
+sudo ~/tegrastats
+
+/home/nvidia/mnist/train/
+
+
+
+Other notes:
+
+ImportError: libprotobuf.so.12: cannot open shared object file: No such file or directory
+Bad key "patch.force_edgecolor" on line 33 in
+/home/nvidia/.local/lib/python2.7/site-packages/matplotlib/mpl-data/stylelib/_classic_test.mplstyle.
+You probably need to get an updated matplotlibrc file from
+http://github.com/matplotlib/matplotlib/blob/master/matplotlibrc.template
+or from the matplotlib source distribution
+
+
+
+Error ...... ValueError: Caffe executable not found at "/home/mx/caffe/build/tools"
+Error ...... ValueError: Caffe executable not found in PATH ........... export CAFFE_ROOT=/home/mx/caffe/
+
+
+
+To fix the problem, all you need to do is to remove the lock files. You can do that easily using the commands below:
+
+sudo rm /var/lib/apt/lists/lock
+sudo rm /var/cache/apt/archives/lock
+sudo rm /var/lib/dpkg/lock
+After that, reconfigure the packages
+
+sudo dpkg --configure -a
+
+The command to remove an apt repository is apt-add-repository with the -r option which will remove instead of add the repository. So in your case, the full command would be:
+
+sudo add-apt-repository -r ppa:colingille/freshlight

@@ -1,0 +1,49 @@
+
+
+0 bounding boxes detected
+0 bounding boxes detected
+0 bounding boxes detected
+0 bounding boxes detected
+1 bounding boxes detected
+bounding box 0   (428.906250, 438.679688)  (500.812500, 510.679688)  w=71.906250  h=72.000000
+draw boxes  1  0   0.000000 200.000000 255.000000 100.000000
+0 bounding boxes detected
+0 bounding boxes detected
+
+
+sudo ~/jetson_clocks.sh && cd jetson-inference/build/aarch64/bin && ./detectnet-camera coco-dog
+
+$ cd jetson-inference/build
+$ make
+
+XML2KITTI
+Python script for conversion annotations saved as XML files in PASCAL VOC format (created by labelImg) to KITTI file format:
+
+Car 0.00 0 0.0 470.00 199.00 877.00 414.00 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+Usage
+Directory source:
+
+python xml2kitti sample/labels
+cd /home/nvidia/xml2kitti-master/sample/labels
+
+or
+File source:
+
+python xml2kitti sample/labels/001622.xml
+python xml2kitti 001622.xml
+
+Results are saved as .txt files at the same directory with the same filename.
+
+cd ~/vod-converter-master
+
+cd /home/nvidia/vod-converter-master
+$ python vod_converter/main.py --from voc --from-path goats --to kitti --to-path goats
+
+
+
+
+
+
+
+
+
