@@ -39,10 +39,11 @@ $ cd caffe
 $ git checkout ssd
 $ cd
 .................. DONE
-
-Run these 2 lines every session:
-$ export CAFFE_ROOT=/home/tegwyn/caffe
-$ export PYTHONPATH=/home/tegwyn/caffe/python:$PYTHONPATH
+####################################################################################
+Must do this every session:
+$ export CAFFE_ROOT=/home/nvidia/caffe
+$ export PYTHONPATH=/home/nvidia/caffe/python:$PYTHONPATH
+####################################################################################
 ..................  DONE
 
 Look in caffe folder and edit 'Makefile.config.example accordingly and save as: 'Makefile.config'.
@@ -53,6 +54,7 @@ $ sudo ln -s /usr/lib/x86_64-linux-gnu/libhdf5_serial.so.10.1.0 /usr/lib/x86_64-
 $ sudo ln -s /usr/lib/x86_64-linux-gnu/libhdf5_serial_hl.so.10.0.2 /usr/lib/x86_64-linux-gnu/libhdf5_hl.so
 #####################################################################################
 Jetson TX2 ARM only:
+$ sudo ~/jetson_clocks.sh && sudo nvpmodel -m0
 $ sudo ln -s /usr/lib/aarch64-linux-gnu/libhdf5_serial.so.10.1.0 /usr/lib/aarch64-linux-gnu/libhdf5.so
 $ sudo ln -s /usr/lib/aarch64-linux-gnu/libhdf5_serial_hl.so.10.0.2 /usr/lib/aarch64-linux-gnu/libhdf5_hl.so
 Makefile.config:
@@ -62,7 +64,10 @@ CUDA_ARCH := -gencode arch=compute_30,code=sm_30 \
              -gencode arch=compute_35,code=sm_35 \
              -gencode arch=compute_50,code=sm_50 \
              -gencode arch=compute_52,code=sm_52 \
-             -gencode arch=compute_61,code=sm_61
+             -gencode arch=compute_61,code=sm_61 \
+	     -gencode arch=compute_62,code=sm_62 \
+	     -gencode arch=compute_62,code=compute_62
+# Should sm_30 be removed?
 BLAS := atlas
 # BLAS := open           
 #####################################################################################
@@ -77,9 +82,52 @@ $ make test -j8
 # (Optional)
 $ make runtest -j8
 
+Create a folder called 'data' inside 'home' directory. Then:
+
+$ cd /home/nvidia/data
+$ wget http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar
+$ wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtrainval_06-Nov-2007.tar
+$ wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtest_06-Nov-2007.tar
+# Extract the data.
+$ cd /home/nvidia/data && tar -xvf VOCtrainval_11-May-2012.tar
+$ tar -xvf VOCtrainval_06-Nov-2007.tar
+$ tar -xvf VOCtest_06-Nov-2007.tar
+
+Create database:
+$ cd $CAFFE_ROOT
+$ ./data/VOC0712/create_list.sh
+$ ./data/VOC0712/create_data.sh
+
+Edit: examples/ssd/ssd_pascal.py:
+gpus ="0"   ............... line 332
+batch_size = 5 ............ used to be 32 (line 337)
+accum_batch_size = 5 ...... used to be 32
+solver_mode = P.Solver.CPU ??????
+
+Train and evaluate:
+$ cd $CAFFE_ROOT
+$ python examples/ssd/ssd_pascal.py
+$ cd $CAFFE_ROOT && python examples/ssd/ssd_pascal.py
 
 
-ERRORS:
+
+
+
+
+
+
+ERRORS (all solved):
+
+I1231 21:21:44.532843 28341 caffe.cpp:155] Finetuning from models/VGGNet/VGG_ILSVRC_16_layers_fc_reduced.caffemodel
+F1231 21:21:44.533020 28341 io.cpp:63] Check failed: fd != -1 (-1 vs. -1) File not found: models/VGGNet/VGG_ILSVRC_16_layers_fc_reduced.caffemodel
+
+The solution is to find VGG_VOC0712_SSD_300x300_iter_120000.caffemodel and paste that file into caffe/models/VGGNet/ and then re-name it to VGG_ILSVRC_16_layers_fc_reduced.caffemodel  ??? Did not work:
+
+I1231 21:39:51.707063 28743 caffe.cpp:155] Finetuning from models/VGGNet/VGG_ILSVRC_16_layers_fc_reduced.caffemodel
+I1231 21:39:52.103772 28743 net.cpp:761] Ignoring source layer mbox_loss
+F1231 21:39:52.267354 28743 parallel.cpp:130] Check failed: error == cudaSuccess (10 vs. 0)  invalid device ordinal
+
+
 
 NVCC src/caffe/solvers/nesterov_solver.cu
 nvcc fatal   : Unsupported gpu architecture 'compute_20'
@@ -97,6 +145,29 @@ LD -o .build_release/lib/libcaffe.so.1.0.0-rc3
 collect2: error: ld returned 1 exit status
 Makefile:566: recipe for target '.build_release/lib/libcaffe.so.1.0.0-rc3' failed
 make: *** [.build_release/lib/libcaffe.so.1.0.0-rc3] Error 1
+
+relu_layer.cu:26] Check failed: error == cudaSuccess (48 vs. 0)  no kernel image is available for execution on the device
+CuDNNNeuronLayerTest/1.TestReLUGradientWithNegativeSlopeCuDNN
+F1231 16:36:15.082500 13192 relu_layer.cu:26] Check failed: error == cudaSuccess (48 vs. 0)  no kernel image is available for execution on the device
+
+F1231 19:00:34.972717 23663 test_bbox_util.cpp:279] Check failed: out_bbox.xmax() == 50. (50 vs. 50) 
+*** Check failure stack trace: ***
+    @       0x7fa4bdf718  google::LogMessage::Fail()
+    @       0x7fa4be1614  google::LogMessage::SendToLog()
+    @       0x7fa4bdf290  google::LogMessage::Flush()
+    @       0x7fa4be1eb4  google::LogMessageFatal::~LogMessageFatal()
+    @           0x8545d0  caffe::CPUBBoxUtilTest_TestOutputBBox_Test::TestBody()
+    @           0xa5bd04  testing::internal::HandleExceptionsInMethodIfSupported<>()
+    @           0xa54fac  testing::Test::Run()
+    @           0xa550e8  testing::TestInfo::Run()
+    @           0xa551a8  testing::TestCase::Run()
+    @           0xa56308  testing::internal::UnitTestImpl::RunAllTests()
+    @           0xa5661c  testing::UnitTest::Run()
+    @           0x53be08  main
+    @       0x7fa2a048a0  __libc_start_main
+Makefile:526: recipe for target 'runtest' failed
+make: *** [runtest] Aborted (core dumped)
+
 
 
 
