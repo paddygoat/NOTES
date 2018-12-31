@@ -1,0 +1,11 @@
+Jetpack seems to work in two halves, for me at least.
+
+First installation is files on host and then flashing OS via 'USB' cable, which is a special cable with serial convertor chip in it (I think). This is all achieved in 'Force USB recovery mode' and generally works without errors as long as WIFI is connected properly for internet.
+
+Second stage is flashing CUDA, CUDNN, OPENCV etc to Jetson and this requires 'Ethernet' cable which is standard data cable with RJ45 connectors on each end. In my instance, I have no router so the host PC and the Jetson are connected peer to peer:
+
+1. $ ifconfig on the Jetson to find ethernet IP address and Mask. Look for 'eth:avahi' to find addresses.
+2. Open 'edit connections' on host pc and create a new manual connection using the IP and mask address from above. Gateway is the same as mask. Make sure device selected is 'enp20' or very similar.
+3. Type IPaddress as above, username = nvidia, password = nvidia.
+4. If failiure, check IP address has not changed using step 1 as above. 
+5. Repeat until it works!
