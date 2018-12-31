@@ -1,0 +1,118 @@
+
+##################################################################################################
+
+$ sudo apt-get update && sudo apt-get upgrade
+$ sudo apt install git
+$ git clone https://github.com/weiliu89/caffe.git
+$ cd caffe
+$ git checkout ssd
+
+$ export CAFFE_ROOT=/home/tegwyn/caffe
+$ export PYTHONPATH=/home/tegwyn/caffe/python:$PYTHONPATH
+
+##################################################################################################
+Edit Makefile.config.example, ie:
+Uncomment the below accordingly:
+
+
+# CPU-only switch (uncomment to build without GPU support).
+CPU_ONLY := 1
+
+BLAS := atlas
+#BLAS := open
+
+
+Now rename the file removing '.example' or use:
+$ cd && cd caffe && cp Makefile.config.example Makefile.config
+###############################################################################################
+
+$ sudo apt-get install libboost-system-dev libboost-thread-dev libgflags-dev libgoogle-glog-dev libhdf5-serial-dev libleveldb-dev liblmdb-dev libopencv-dev libsnappy-dev python-all-dev python-dev python-h5py python-matplotlib python-numpy python-opencv python-pil python-pip python-pydot python-scipy python-skimage python-sklearn
+
+$ sudo apt-get install python-setuptools
+$ sudo apt-get install autoconf automake libtool curl make g++ unzip
+$ sudo apt-get install protobuf-compiler
+
+$ export PROTOBUF_ROOT=~/protobuf
+$ git clone https://github.com/google/protobuf.git $PROTOBUF_ROOT -b '3.2.x'
+$ cd $PROTOBUF_ROOT
+$ ./autogen.sh
+$ ./configure
+$ make "-j$(nproc)"
+$ sudo make install
+$ sudo ldconfig
+$ cd $PROTOBUF_ROOT/python
+$ sudo python setup.py install --cpp_implementation
+
+$ sudo apt-get install --no-install-recommends build-essential cmake git gfortran libatlas-base-dev libboost-filesystem-dev libboost-python-dev
+
+
+$ sudo apt-get install libprotobuf-dev libleveldb-dev libsnappy-dev libopencv-dev libboost-all-dev libhdf5-serial-dev \
+libgflags-dev libgoogle-glog-dev liblmdb-dev protobuf-compiler
+
+$ sudo ln -s /usr/lib/x86_64-linux-gnu/libhdf5_serial.so.10.1.0 /usr/lib/x86_64-linux-gnu/libhdf5.so
+$ sudo ln -s /usr/lib/x86_64-linux-gnu/libhdf5_serial_hl.so.10.0.2 /usr/lib/x86_64-linux-gnu/libhdf5_hl.so
+
+
+$ cd && cd caffe && make -j8
+# Make sure to include $CAFFE_ROOT/python to your PYTHONPATH.
+$ make py
+$ make test -j8
+# (Optional)
+$ make runtest -j8
+
+$ cd /home/tegwyn/data
+$ wget http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar
+$ wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtrainval_06-Nov-2007.tar
+$ wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtest_06-Nov-2007.tar
+# Extract the data.
+$ cd /home/tegwyn/data && tar -xvf VOCtrainval_11-May-2012.tar
+$ tar -xvf VOCtrainval_06-Nov-2007.tar
+$ tar -xvf VOCtest_06-Nov-2007.tar
+
+Create database:
+$ cd $CAFFE_ROOT
+$ ./data/VOC0712/create_list.sh
+$ ./data/VOC0712/create_data.sh
+
+Train and evaluate:
+$ cd $CAFFE_ROOT
+$ python examples/ssd/ssd_pascal.py
+$ cd $CAFFE_ROOT && python examples/ssd/ssd_pascal.py
+
+
+################################################################################################
+Have to do this every time:
+
+$ export CAFFE_ROOT=/home/tegwyn/caffe
+$ export PYTHONPATH=/home/tegwyn/caffe/python:$PYTHONPATH
+
+#################################################################################################
+
+Not sure if i did this or not:
+
+ LIBRARY_DIRS := $(PYTHON_LIB) /usr/local/lib /usr/lib / usr/lib/x86_64-linux-gnu/hdf5/serial
+
+ INCLUDE_DIRS := $(PYTHON_INCLUDE) /usr/local/include /usr/include/hdf5/serial
+#################################################################################################
+
+
+VGG_ILSVRC_16_layers_fc_reduced.caffemodel  was not there!
+
+I edited line 102 of python examples/ssd/ssd_pascal_webcam.py to CPU instead of GPU:
+# Use GPU or CPU
+solver_mode = P.Solver.CPU
+THIS WORKED !!!!!
+Now do the same for ssd_pascal.py .... WORKS !!!!
+
+python examples/ssd/ssd_pascal.py:
+batch_size = 5 ............ used to be 32 (line 337)
+accum_batch_size = 5 ...... used to be 32
+
+
+
+
+
+
+
+
+
