@@ -105,6 +105,8 @@ Face, Emotion, Age, Gender, and Pose Detection example:
 
 ./interactive_face_detection_demo -d MYRIAD -m /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-retail-0004/FP16/face-detection-retail-0004.xml -d_ag MYRIAD -m_ag /opt/intel/computer_vision_sdk/deployment_tools/intel_models/age-gender-recognition-retail-0013/FP16/age-gender-recognition-retail-0013.xml -d_em MYRIAD -m_em /opt/intel/computer_vision_sdk/deployment_tools/intel_models/emotions-recognition-retail-0003/FP16/emotions-recognition-retail-0003.xml -d_hp MYRIAD -m_hp /opt/intel/computer_vision_sdk/deployment_tools/intel_models/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml    ............ WORKS !!!!!!
 
+cd ~/inference_engine_samples/intel64/Release
+
 ./interactive_face_detection_demo -d MYRIAD -m /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/face-detection-retail-0004/FP16/face-detection-retail-0004.xml -d_ag MYRIAD -m_ag /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/age-gender-recognition-retail-0013/FP16/age-gender-recognition-retail-0013.xml -d_em MYRIAD -m_em /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/emotions-recognition-retail-0003/FP16/emotions-recognition-retail-0003.xml -d_hp MYRIAD -m_hp /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml  ............ WORKS on new install.
 
 computer_vision_sdk_2018.5.445
@@ -142,6 +144,41 @@ cd ~/inference_engine_samples/intel64/Release
 ./object_detection_demo_ssd_async -d MYRIAD -i cam -m /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/person-vehicle-bike-detection-crossroad-0078/FP16/person-vehicle-bike-detection-crossroad-0078.xml
 
 source /opt/intel/computer_vision_sdk/bin/setupvars.sh
+
+cd ~/inference_engine_samples/intel64/Release
+
+./interactive_face_detection_demo -i /home/tegwyn/Desktop/avatar.bmp -d MYRIAD -m /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/face-detection-retail-0004/FP16/face-detection-retail-0004.xml -d_ag MYRIAD -m_ag /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/age-gender-recognition-retail-0013/FP16/age-gender-recognition-retail-0013.xml -d_em MYRIAD -m_em /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/emotions-recognition-retail-0003/FP16/emotions-recognition-retail-0003.xml -d_hp MYRIAD -m_hp /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml
+
+sudo rm /dev/video0
+ls -ltr /dev/video*
+sudo mv /dev/video1 /dev/video0
+
+gst-launch-1.0 -e icamerasrc device-name=0 io-mode=3 ! video/x-raw,format=NV12,width=640,height=480,framerate=30/1 ! vaapih264enc tune=low-power dmabuf-alloc-tiled=true ! h264parse ! mp4mux ! filesink location=test.mp4
+
+sudo apt-get install v4l-utils
+v4l2-ctl
+v4l2-ctl --help-vidout
+v4l2-ctl --list-fields-out
+
+v4l2-ctl --list-formats-out
+v4l2-ctl --get-fmt-video-out
+
+v4l2-ctl --try-fmt-video-out=width=<640>,height=<480>
+
+
+cd /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/ && sudo chmod 777 model_optimizer
+cd /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/model_optimizer/
+python3 mo_caffe.py --input_model /home/tegwyn/Desktop/wasp/snapshot_iter_63300.caffemodel
+python3 mo.py --input_model /home/tegwyn/Desktop/wasp/snapshot_iter_63300.caffemodel
+python3 mo.py --input_model /home/tegwyn/Desktop/wasp/snapshot_iter_63300.caffemodel --input_shape [1,3,640,640]
+ --input_shape (1,3,227,227)
+/home/tegwyn/Desktop/TRAIN227/snapshot_iter_71800.caffemodel
+python3 mo_caffe.py --input_model /home/tegwyn/Desktop/TRAIN227/snapshot_iter_71800.caffemodel --log_level=DEBUG
+
+python3 mo.py --input_model /home/tegwyn/Desktop/TRAIN227/snapshot_iter_71800.caffemodel
+
+
+
 
 
 
