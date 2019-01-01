@@ -2,6 +2,10 @@ sed -i "s|/home/pi/inference_engine_vpu_arm/|$(pwd)/inference_engine_vpu_arm|" i
 
 source <OVINO_INSTALLDIR>/bin/setupvars.sh'
 
+
+$ sudo vi /etc/bash.bashrc
+source /home/pi/inference_engine_vpu_arm/bin/setupvars.sh
+
 ./armv7l/Release/object_detection_sample_ssd -m face-detection-adas-0001.xml -d MYRIAD -i /home/pi/Desktop/2019-01-01-134139.jpg
 
 
