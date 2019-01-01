@@ -1,0 +1,20 @@
+sed -i "s|/home/pi/inference_engine_vpu_arm/|$(pwd)/inference_engine_vpu_arm|" inference_engine_vpu_arm/bin/setupvars.sh
+
+source <OVINO_INSTALLDIR>/bin/setupvars.sh'
+
+./armv7l/Release/object_detection_sample_ssd -m face-detection-adas-0001.xml -d MYRIAD -i /home/pi/Desktop/2019-01-01-134139.jpg
+
+
+/home/pi/inference_engine_vpu_arm/deployment_tools/inference_engine/samples/build/out_0.bmp
+
+cd /home/pi/inference_engine_vpu_arm/deployment_tools/inference_engine/samples/interactive_face_detection_demo
+cd /home/pi/inference_engine_vpu_arm/deployment_tools/inference_engine/samples/build/interactive_face_detection_demo
+
+I downloaded intel models to: /home/pi/intel_models/  (350mb)
+
+
+To run the 3 tier face detection interactive demo:
+
+cd /home/pi/inference_engine_vpu_arm/deployment_tools/inference_engine/samples/build/armv7l/Release
+
+./interactive_face_detection_demo -d MYRIAD -m /home/pi/intel_models/face-detection-retail-0004/FP16/face-detection-retail-0004.xml -d_ag MYRIAD -m_ag /home/pi/intel_models/age-gender-recognition-retail-0013/FP16/age-gender-recognition-retail-0013.xml -d_em MYRIAD -m_em /home/pi/intel_models/emotions-recognition-retail-0003/FP16/emotions-recognition-retail-0003.xml -d_hp MYRIAD -m_hp /home/pi/intel_models/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml    ............ WORKS !!!!
