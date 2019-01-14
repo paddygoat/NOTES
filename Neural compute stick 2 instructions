@@ -331,6 +331,97 @@ Framework-agnostic parameters:
                         generates IR V3.
 
 
+cd /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/model_optimizer/
+
+python3 mo_caffe.py --data_type=FP16 --input_model /home/tegwyn/Desktop/SSD_300_WASP01/VGG_VOC0712_SSD_300x300_iter_20211.caffemodel
+
+[ SUCCESS ] XML file: /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/model_optimizer/./VGG_VOC0712_SSD_300x300_iter_20211.xml
+[ SUCCESS ] BIN file: /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/model_optimizer/./VGG_VOC0712_SSD_300x300_iter_20211.bin
+
+cd ~/inference_engine_samples/intel64/Release
+./object_detection_demo_ssd_async -d MYRIAD -i cam -m /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/model_optimizer/./VGG_VOC0712_SSD_300x300_iter_20211.xml  ..... WORKS !!!!!
+
+cd ~/inference_engine_samples/intel64/Release
+./object_detection_sample_ssd -d MYRIAD -i /home/tegwyn/Desktop/wasp05.bmp -m /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/model_optimizer/./VGG_VOC0712_SSD_300x300_iter_20211.xml ....... WORKS !!!!!!
+
+/home/tegwyn/inference_engine_samples/intel64/Release/out_0.bmp
+
+[0,1] element, prob = 0.99707    (25,92.5)-(574.062,548.75) batch id : 0 WILL BE PRINTED!
+[1,1] element, prob = 0.0516968    (269.062,99.6875)-(687.5,540.312) batch id : 0
+[2,1] element, prob = 0.0117722    (447.5,451.562)-(784.375,790) batch id : 0
+[3,1] element, prob = 0.0100327    (353.75,-117.5)-(607.5,265.312) batch id : 0
+[ INFO ] Image out_0.bmp created!
+
+[0,1] element, prob = 1    (8.82812,228.438)-(205.312,409.375) batch id : 0 WILL BE PRINTED!
+[1,1] element, prob = 1    (163.75,202.812)-(362.812,420.312) batch id : 0 WILL BE PRINTED!
+[2,1] element, prob = 1    (390.938,292.031)-(626.562,505.625) batch id : 0 WILL BE PRINTED!
+[3,1] element, prob = 1    (160.625,386.25)-(382.188,623.125) batch id : 0 WILL BE PRINTED!
+[4,1] element, prob = 0.999023    (7.8125,372.188)-(173.75,577.188) batch id : 0 WILL BE PRINTED!
+[5,1] element, prob = 0.99707    (282.188,120.078)-(492.188,343.438) batch id : 0 WILL BE PRINTED!
+[6,1] element, prob = 0.161255    (210.312,148.359)-(433.438,392.812) batch id : 0
+[7,1] element, prob = 0.152832    (165,251.562)-(284.688,350.938) batch id : 0
+[8,1] element, prob = 0.0758667    (230.781,305.625)-(328.75,431.25) batch id : 0
+[9,1] element, prob = 0.0470276    (251.25,177.5)-(699.375,473.125) batch id : 0
+[10,1] element, prob = 0.0458679    (2.1875,287.5)-(180.625,483.75) batch id : 0
+[11,1] element, prob = 0.0388184    (219.062,294.375)-(510.938,445.625) batch id : 0
+[12,1] element, prob = 0.0379333    (1.09375,404.062)-(52.1094,500.938) batch id : 0
+[13,1] element, prob = 0.0323792    (89.0625,223.75)-(275.312,406.875) batch id : 0
+[14,1] element, prob = 0.0202637    (295,202.969)-(451.25,503.75) batch id : 0
+[15,1] element, prob = 0.0196075    (71.4844,375.938)-(289.062,617.812) batch id : 0
+[16,1] element, prob = 0.0182953    (232.344,380)-(701.25,651.875) batch id : 0
+[17,1] element, prob = 0.0160522    (393.75,131.875)-(618.125,342.5) batch id : 0
+[18,1] element, prob = 0.0159302    (142.969,233.75)-(244.531,336.25) batch id : 0
+[19,1] element, prob = 0.0155487    (288.125,263.438)-(371.875,375.938) batch id : 0
+[20,1] element, prob = 0.0140076    (-69.6875,386.562)-(381.25,660.625) batch id : 0
+[21,1] element, prob = 0.0131454    (154.375,432.5)-(478.75,731.875) batch id : 0
+[ INFO ] Image out_0.bmp created!
+
+[0,1] element, prob = 0.996094    (121.719,351.25)-(176.25,428.125) batch id : 0 WILL BE PRINTED!
+[1,1] element, prob = 0.992188    (113.281,429.375)-(184.844,495) batch id : 0 WILL BE PRINTED!
+[2,1] element, prob = 0.984375    (455.938,439.062)-(536.562,492.188) batch id : 0 WILL BE PRINTED!
+[3,1] element, prob = 0.9375    (187.969,479.062)-(231.094,557.188) batch id : 0 WILL BE PRINTED!
+[4,1] element, prob = 0.821289    (399.375,467.5)-(468.75,521.875) batch id : 0 WILL BE PRINTED!
+[5,1] element, prob = 0.808105    (14.6289,246.094)-(61.7969,321.875) batch id : 0 WILL BE PRINTED!
+[6,1] element, prob = 0.79834    (365.938,307.031)-(435.938,351.562) batch id : 0 WILL BE PRINTED!
+[7,1] element, prob = 0.79834    (220.625,330)-(282.812,389.375) batch id : 0 WILL BE PRINTED!
+[8,1] element, prob = 0.613281    (334.375,97.1094)-(383.75,157.266) batch id : 0 WILL BE PRINTED!
+[9,1] element, prob = 0.605957    (526.562,187.5)-(584.062,233.125) batch id : 0 WILL BE PRINTED!
+[10,1] element, prob = 0.588867    (116.016,209.531)-(181.875,247.969) batch id : 0 WILL BE PRINTED!
+[11,1] element, prob = 0.577148    (228.125,290.469)-(287.5,336.25) batch id : 0 WILL BE PRINTED!
+[12,1] element, prob = 0.562012    (371.25,343.75)-(427.5,393.75) batch id : 0 WILL BE PRINTED!
+[13,1] element, prob = 0.503906    (484.375,288.594)-(558.125,338.125) batch id : 0 WILL BE PRINTED!
+[14,1] element, prob = 0.466797    (421.25,497.5)-(485.625,551.25) batch id : 0
+[15,1] element, prob = 0.459229    (515.625,245.469)-(568.75,285.469) batch id : 0
+[16,1] element, prob = 0.364746    (301.406,256.25)-(349.375,305.938) batch id : 0
+[17,1] element, prob = 0.267334    (564.688,214.219)-(627.188,251.094) batch id : 0
+[18,1] element, prob = 0.256836    (56.0547,349.062)-(95.8594,397.812) batch id : 0
+[19,1] element, prob = 0.222656    (57.8125,137.734)-(99.7656,199.688) batch id : 0
+[20,1] element, prob = 0.204346    (82.1875,53.5156)-(126.094,98.9062) batch id : 0
+[21,1] element, prob = 0.169922    (379.062,499.375)-(430.312,555) batch id : 0
+[22,1] element, prob = 0.164551    (378.438,189.062)-(434.062,231.25) batch id : 0
+[23,1] element, prob = 0.104492    (15.7227,299.062)-(61.6406,357.812) batch id : 0
+[24,1] element, prob = 0.0974121    (158.75,75.4688)-(201.25,129.844) batch id : 0
+[25,1] element, prob = 0.0927124    (367.188,265)-(417.188,308.125) batch id : 0
+[26,1] element, prob = 0.0814819    (213.438,432.188)-(277.812,473.438) batch id : 0
+[27,1] element, prob = 0.0693359    (232.5,307.812)-(285.312,361.562) batch id : 0
+[28,1] element, prob = 0.0533752    (366.875,325)-(433.75,375) batch id : 0
+[29,1] element, prob = 0.0352783    (421.562,481.25)-(490.312,528.125) batch id : 0
+[30,1] element, prob = 0.0196075    (134.688,61.6797)-(172.031,94.8438) batch id : 0
+[31,1] element, prob = 0.0181427    (480,268.125)-(535,299.688) batch id : 0
+[32,1] element, prob = 0.0178528    (505,259.062)-(561.25,295.312) batch id : 0
+[33,1] element, prob = 0.0167999    (50.9375,335)-(83.6719,376.25) batch id : 0
+[34,1] element, prob = 0.0151367    (413.75,504.688)-(458.125,560.312) batch id : 0
+[35,1] element, prob = 0.0139999    (234.688,162.188)-(726.25,476.875) batch id : 0
+[36,1] element, prob = 0.0138702    (551.875,200.938)-(618.75,237.5) batch id : 0
+[37,1] element, prob = 0.0133896    (298.438,404.062)-(343.438,469.688) batch id : 0
+[38,1] element, prob = 0.0125275    (145.625,65.7422)-(186.25,97.0312) batch id : 0
+[ INFO ] Image out_0.bmp created!
+
+
+
+
+
+
 
 
 
