@@ -41,12 +41,10 @@ git clone https://github.com/NVIDIA/caffe.git $CAFFE_ROOT -b 'caffe-0.15'
 
               ------------- Done ------------------------------
 
-sudo python -m pip uninstall pip && sudo apt install python-pip --reinstall          
-...... This downgrades pip !!!!!
 pip install Cython
 pip install -r $CAFFE_ROOT/python/requirements.txt --user
 
-              ----------------- DONE with errors --------------
+              ----------------- DONE. ignore the errors --------------
 
 sudo apt-get install python-dev build-essential
 RuntimeError: Cython >= 0.23 is required to build scikit-image from git checkout
