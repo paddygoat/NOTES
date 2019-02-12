@@ -42,6 +42,7 @@ git clone https://github.com/NVIDIA/caffe.git $CAFFE_ROOT -b 'caffe-0.15'
               ------------- Done ------------------------------
 
 pip install Cython
+sudo apt python3-pip
 pip install -r $CAFFE_ROOT/python/requirements.txt --user
 
               ----------------- DONE. ignore the errors --------------
