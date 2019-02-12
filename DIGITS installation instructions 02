@@ -17,7 +17,6 @@ DIGITS is currently (september 2018) compatiable with Protobuf 3.2.x:
 export PROTOBUF_ROOT=~/protobuf
 cd $PROTOBUF_ROOT
 git clone https://github.com/google/protobuf.git $PROTOBUF_ROOT -b '3.2.x'
-cd $PROTOBUF_ROOT
 ./autogen.sh
 ./configure
 make "-j$(nproc)"
