@@ -4,6 +4,7 @@ sudo apt-get update
 sudo apt-get upgrade
 
 Firstly, check instructions here: https://docs.nvidia.com/deeplearning/digits/digits-installation/index.html
+Then: https://github.com/NVIDIA/DIGITS/blob/master/docs/BuildDigits.md
 
 # Download new list of packages
 sudo apt-get update
@@ -119,12 +120,12 @@ export PYTHONPATH=/home/nvidia/caffe/python:$PYTHONPATH
 
 
 Starting the server:
+export CAFFE_ROOT=/home/nvidia/caffe    (?????)
 
 cd digits
-export CAFFE_ROOT=/home/nvidia/caffe
 ./digits-devserver
 
-sudo ~/jetson_clocks.sh && cd digits && export CAFFE_ROOT=/home/nvidia/caffe && ./digits-devserver
+sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd digits && export CAFFE_ROOT=/home/nvidia/caffe && ./digits-devserver
 
 
 Now paste 'http://localhost:5000/' into browser url tab. (Starts a server at http://localhost:5000/)
