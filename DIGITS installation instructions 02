@@ -1,7 +1,9 @@
 Requirements:
 Jetson TX2 flashed with JetPack 3.3.
+sudo apt-get update
+sudo apt-get upgrade
 
-https://docs.nvidia.com/deeplearning/digits/digits-installation/index.html
+Firstly, check instructions here: https://docs.nvidia.com/deeplearning/digits/digits-installation/index.html
 
 # Download new list of packages
 sudo apt-get update
@@ -44,7 +46,14 @@ git clone https://github.com/NVIDIA/caffe.git $CAFFE_ROOT -b 'caffe-0.15'
               ------------- Done ------------------------------
 
 pip install Cython
+
+sudo apt-get install libfreetype6-dev 
+sudo apt-get install pkg-config
+sudo apt-get install libpng12-dev
+sudo pip install --upgrade setuptools
+
 sudo apt python3-pip
+pip3 install -U matplotlib --user
 
 export CAFFE_ROOT=~/caffe
 cat $CAFFE_ROOT/python/requirements.txt | xargs -n1 sudo pip install
