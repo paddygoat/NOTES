@@ -133,6 +133,8 @@ Now paste 'http://localhost:5000/' into browser url tab. (Starts a server at htt
 Now refer to: https://github.com/NVIDIA/DIGITS/blob/master/docs/GettingStarted.md
 or: https://github.com/dusty-nv/jetson-inference
 
+Caffe model pre-trained: http://dl.caffe.berkeleyvision.org/bvlc_googlenet.caffemodel
+
 python -m digits.download_data mnist ~/mnist
 sudo ~/jetson_clocks.sh          .............. activates the fan !!!
 sudo ~/jetson_clocks.sh --show
