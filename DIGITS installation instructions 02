@@ -120,8 +120,8 @@ export PYTHONPATH=/home/nvidia/caffe/python:$PYTHONPATH
 
 
 Starting the server:
-export CAFFE_ROOT=/home/nvidia/caffe    (?????)
 
+export CAFFE_ROOT=/home/nvidia/caffe
 cd digits
 ./digits-devserver
 
