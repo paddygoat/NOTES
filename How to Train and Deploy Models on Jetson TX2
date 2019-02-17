@@ -97,47 +97,47 @@ layer {
 }
 Open terminal and run, changing the '*****' number accordingly:
 
-$ cd && cd jetson-inference/build/aarch64/bin && NET=DetectNet-COCO-Dog && sudo ./detectnet-camera \
+$ cd && cd jetson-inference/build/aarch64/bin && NET=networks/DetectNet-COCO-Dog && sudo ./detectnet-camera \
 --prototxt=$NET/deploy.prototxt \
 --model=$NET/snapshot_iter_38600.caffemodel \
 
-$ cd && cd jetson-inference/build/aarch64/bin && NET=myDogModel_epoch_30 && sudo ./detectnet-camera \
+$ cd && cd jetson-inference/build/aarch64/bin && NET=networks/myDogModel_epoch_30 && sudo ./detectnet-camera \
 --prototxt=$NET/deploy.prototxt \
 --model=$NET/snapshot_iter_*****.caffemodel \
 
-$ cd && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=wasp_epoch_32 && sudo ./detectnet-camera \
+$ cd && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=networks/wasp_epoch_32 && sudo ./detectnet-camera \
 --prototxt=$NET/deploy.prototxt \
 --model=$NET/snapshot_iter_14464.caffemodel \
 
-$ cd && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=wasp_epoch_100_02 && sudo ./detectnet-camera \
+$ cd && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=networks/wasp_epoch_100_02 && sudo ./detectnet-camera \
 --prototxt=$NET/deploy.prototxt \
 --model=$NET/snapshot_iter_9500.caffemodel \
 
-$ cd && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=wasp_epoch_100F && sudo ./detectnet-camera \
+$ cd && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=networks/wasp_epoch_100F && sudo ./detectnet-camera \
 --prototxt=$NET/deploy.prototxt \
 --model=$NET/snapshot_iter_11680.caffemodel \
 
-$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=wasp_epoch_200F && sudo ./detectnet-camera \
+$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=networks/wasp_epoch_200F && sudo ./detectnet-camera \
 --prototxt=$NET/deploy.prototxt \
 --model=$NET/snapshot_iter_26280.caffemodel \
 
-$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=wasp_epoch_100H && sudo ./detectnet-camera \
+$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=networks/wasp_epoch_100H && sudo ./detectnet-camera \
 --prototxt=$NET/deploy.prototxt \
 --model=$NET/snapshot_iter_21100.caffemodel \
 
-$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=wasp_AWS_000025 && sudo ./detectnet-camera \
+$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=networks/wasp_AWS_000025 && sudo ./detectnet-camera \
 --prototxt=$NET/deploy.prototxt \
 --model=$NET/snapshot_iter_63300.caffemodel \
 
-$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=wasp_iter_75300_I01 && sudo ./detectnet-camera \
+$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=networks/wasp_iter_75300_I01 && sudo ./detectnet-camera \
 --prototxt=$NET/deploy.prototxt \
 --model=$NET/snapshot_iter_75300.caffemodel \
 
-$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=wasp_iter_35900_December2018 && sudo ./detectnet-camera \
+$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=networks/wasp_iter_35900_December2018 && sudo ./detectnet-camera \
 --prototxt=$NET/deploy.prototxt \
 --model=$NET/snapshot_iter_35900.caffemodel \
 
-$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=TRAIN227 && sudo ./detectnet-camera \
+$ cd && sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd jetson-inference/build/aarch64/bin && NET=networks/TRAIN227 && sudo ./detectnet-camera \
 --prototxt=$NET/deploy.prototxt \
 --model=$NET/snapshot_iter_71800.caffemodel \
 
