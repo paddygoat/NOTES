@@ -97,6 +97,10 @@ layer {
 }
 Open terminal and run, changing the '*****' number accordingly:
 
+$ cd && cd jetson-inference/build/aarch64/bin && NET=DetectNet-COCO-Dog && sudo ./detectnet-camera \
+--prototxt=$NET/deploy.prototxt \
+--model=$NET/snapshot_iter_38600.caffemodel \
+
 $ cd && cd jetson-inference/build/aarch64/bin && NET=myDogModel_epoch_30 && sudo ./detectnet-camera \
 --prototxt=$NET/deploy.prototxt \
 --model=$NET/snapshot_iter_*****.caffemodel \
