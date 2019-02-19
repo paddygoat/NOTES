@@ -1,0 +1,43 @@
+cd /home/tegwyn/Desktop/Orbitty
+
+chmod +x JetPack-L4T-3.3-linux-x64_b39.run
+./JetPack-L4T-3.3-linux-x64_b39.run
+
+
+
+Copy the CTI-L4T-V121.tgz package into:
+
+orbitty/64_TX2/Linux_for_Tegra/
+
+Change to the Linux_for_Tegra_tx2 directory:
+
+cd /home/tegwyn/Desktop/Orbitty/64_TX2/Linux_for_Tegra
+
+Extract the BSP:
+
+tar -xzf CTI-L4T-V121.tgz
+
+Run the install script (as root or sudo) to automatically install the BSP files to the correct locations on the host system:
+
+cd /home/tegwyn/Desktop/Orbitty/64_TX2/Linux_for_Tegra/CTI-L4T
+sudo ./install.sh
+
+Change back to the Linux_for_Tegra directory:
+cd /home/tegwyn/Desktop/Orbitty/64_TX2/Linux_for_Tegra/
+
+Put Jetson TX2 into recovery mode with USB cable connected.
+Check connection:
+lsusb
+Now you can flash a TX2 using the NVIDIA Development Kit or CTI carrier.
+
+CTI Assisted Flashing
+./cti-flash.sh
+
+Manual Flashing
+./flash.sh <profile> mmcblk0p1
+
+TX2 Examples:
+./flash.sh orbitty mmcblk0p1
+
+
+
