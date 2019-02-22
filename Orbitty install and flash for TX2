@@ -25,7 +25,17 @@ sudo ./install.sh
 Change back to the Linux_for_Tegra directory:
 cd /home/tegwyn/Desktop/Orbitty/64_TX2/Linux_for_Tegra/
 
+........................................................
+
 Put Jetson TX2 into recovery mode with USB cable connected.
+
+1.Press and release power button
+2.Press and hold recovery button
+3.Press and release reset button
+4.Release recovery button
+
+
+
 Check connection:
 lsusb
 Now you can flash a TX2 using the NVIDIA Development Kit or CTI carrier.
@@ -33,11 +43,31 @@ Now you can flash a TX2 using the NVIDIA Development Kit or CTI carrier.
 CTI Assisted Flashing
 ./cti-flash.sh
 
-Manual Flashing
-./flash.sh <profile> mmcblk0p1
-
 TX2 Examples:
-./flash.sh orbitty mmcblk0p1
+sudo ./flash.sh orbitty mmcblk0p1
+
+cd /home/tegwyn/Desktop/Jetpack_stuff/
+./JetPack-L4T-3.3-linux-x64_b39.run
+
+
+sudo apt-get update
+sudo apt-get upgrade
+
+Internet and ethernet MUST be working simultaneously on TX2 - test this works.
+On TX2, select new connection, then Method = 'shared to other computers' and Device = eth0. Nothing else to change or add. Internet does not have to work on host.
+
+Use $ ifconfig on TX2 to find auto assigned IP address and gateway. (Gateway = Mask).NB. It does change!
+
+Example:
+ethernet:  169.254.140.154 .... On TX2
+ethernet:  169.254.140.155 .... On host ..... NB last digit is different.
+ethernet:  169.254.140.154 .... In host check box
+
+
+
+
+
+
 
 
 
