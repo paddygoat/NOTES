@@ -3,6 +3,8 @@ Jetson TX2 flashed with JetPack 3.3.
 sudo apt-get update
 sudo apt-get upgrade
 
+sudo ~/jetson_clocks.sh && sudo nvpmodel -m0
+
 Firstly, check instructions here: https://docs.nvidia.com/deeplearning/digits/digits-installation/index.html
 Then: https://github.com/NVIDIA/DIGITS/blob/master/docs/BuildDigits.md
 
