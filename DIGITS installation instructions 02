@@ -1,6 +1,7 @@
 Requirements:
 Jetson TX2 flashed with JetPack 3.3.
 sudo apt-get update
+sudo killall apt apt-get
 sudo apt-get upgrade
 
 sudo ~/jetson_clocks.sh && sudo nvpmodel -m0
@@ -22,8 +23,8 @@ sudo apt-get install autoconf automake libtool curl make g++ git python-dev pyth
 DIGITS is currently (september 2018) compatiable with Protobuf 3.2.x:
 
 export PROTOBUF_ROOT=~/protobuf
-cd $PROTOBUF_ROOT
 git clone https://github.com/google/protobuf.git $PROTOBUF_ROOT -b '3.2.x'
+cd $PROTOBUF_ROOT
 ./autogen.sh
 ./configure
 make "-j$(nproc)"
@@ -55,7 +56,7 @@ sudo apt-get install pkg-config
 sudo apt-get install libpng12-dev
 sudo pip install --upgrade setuptools
 
-sudo apt python3-pip
+sudo apt install python3-pip
 pip3 install -U matplotlib --user
 
 export CAFFE_ROOT=~/caffe
@@ -64,16 +65,15 @@ cat $CAFFE_ROOT/python/requirements.txt | xargs -n1 sudo pip install
               ----------------- DONE. ignore the errors --------------
 
 sudo apt-get install python-dev build-essential
-RuntimeError: Cython >= 0.23 is required to build scikit-image from git checkout
-?????????????   pip install --upgrade pip
 
 sudo apt-get install protobuf-compiler
-cd /home/nvidia/protobuf
-cmake -DBLAS=open
 
 Please edit file $CAFFE_ROOT/3rdparty/cub/host/mutex.cuh
 line124: --- #ifndef __arm__
 line124: +++ #if !defined(__arm__) && !defined(__aarch64__)
+
+cd /home/nvidia/protobuf/cmake
+cmake -DBLAS=open
 
 And make it again
 $ make clean && make -j4
@@ -110,11 +110,15 @@ pip3 install -U matplotlib --user
 
 (Matplotlib 3.0+ does not support Python 2.x, 3.0, 3.1, 3.2, 3.3, or 3.4.
     Beginning with Matplotlib 3.0, Python 3.5 and above is required.)
-
+    
+cd
 DIGITS_ROOT=~/digits
 git clone https://github.com/NVIDIA/DIGITS.git $DIGITS_ROOT
 
 pip install -r $DIGITS_ROOT/requirements.txt --user
+
+  error: invalid command 'bdist_wheel'
+
 pip install -e $DIGITS_ROOT --user
 
 export CAFFE_ROOT=/home/nvidia/caffe
