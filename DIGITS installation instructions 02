@@ -144,6 +144,10 @@ cmake ../
 cd jetson-inference/build
 make
 
+Download example COCO dataset:
+wget --no-check-certificate https://nvidia.box.com/shared/static/tdrvaw3fd2cwst2zu2jsi0u43vzk8ecu.gz -O coco.tar.gz
+tar -xzvf coco.tar.gz
+
 Caffe model pre-trained: http://dl.caffe.berkeleyvision.org/bvlc_googlenet.caffemodel
 
 python -m digits.download_data mnist ~/mnist
