@@ -151,7 +151,7 @@ ls -ltrh /dev/video*
 Find detectnet-camera.cpp and change line 39:
 
 #define DEFAULT_CAMERA -1	// -1 for onboard camera, or change to index of /dev/video V4L2
-                                // 1 for USB camera
+                                // 0 for USB camera ????
 				
 $ cd && cd jetson-inference/build/aarch64/bin && NET=networks/DetectNet-COCO-Dog && sudo ./detectnet-camera \
 --prototxt=$NET/deploy.prototxt \
