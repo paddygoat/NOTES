@@ -130,8 +130,19 @@ sudo ~/jetson_clocks.sh && sudo nvpmodel -m0 && cd digits && export CAFFE_ROOT=/
 
 Now paste 'http://localhost:5000/' into browser url tab. (Starts a server at http://localhost:5000/)
 
+
+
 Now refer to: https://github.com/NVIDIA/DIGITS/blob/master/docs/GettingStarted.md
-or: https://github.com/dusty-nv/jetson-inference
+or: https://github.com/dusty-nv/jetson-inference:
+
+git clone https://github.com/dusty-nv/jetson-inference
+cd jetson-inference
+git submodule update --init
+mkdir build
+cd build
+cmake ../
+cd jetson-inference/build
+make
 
 Caffe model pre-trained: http://dl.caffe.berkeleyvision.org/bvlc_googlenet.caffemodel
 
