@@ -145,6 +145,8 @@ cd jetson-inference/build
 make
 
 Test object detection on dogs:
+Find USB camera: 
+ls -ltrh /dev/video*
 
 Find detectnet-camera.cpp and change line 39:
 
