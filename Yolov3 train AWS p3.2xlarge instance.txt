@@ -1,0 +1,81 @@
+
+source activate python3
+sourec activate pytorch_p36
+
+git clone https://github.com/paddygoat/darknet
+cd darknet
+make
+
+conda install -c anaconda opencv
+
+yolov3.cfg (236 MB COCO Yolo v3) - requires 4 GB GPU-RAM: https://pjreddie.com/media/files/yolov3.weights
+
+To train on Linux: $ ./darknet detector train data/obj.data yolo-obj.cfg darknet53.conv.74
+
+wget -P /home/ubuntu/darknet/build/x64 https://pjreddie.com/media/files/darknet53.conv.74
+cd darknet/build/x64
+./darknet detector train data/obj.data yolo-obj.cfg darknet53.conv.74
+
+ubuntu@ip-172-31-25-87:~/darknet$ ./darknet detector train data/obj.data yolo-obj.cfg darknet53.conv.74
+yolo-obj
+Couldn't open file: yolo-obj.cfg
+ubuntu@ip-172-31-25-87:~/darknet$
+
+./darknet detector train data/obj.data cfg/yolo-obj.cfg darknet53.conv.74
+
+Loading weights from darknet53.conv.74...Couldn't open file: darknet53.conv.74
+wget -P /home/ubuntu/darknet https://pjreddie.com/media/files/darknet53.conv.74
+cd darknet
+./darknet detector train data/obj.data cfg/yolo-obj.cfg darknet53.conv.74
+
+Total BFLOPS 65.290
+ Allocate additional workspace_size = 200.40 MB
+Loading weights from darknet53.conv.74...
+ seen 64
+Done!
+Learning Rate: 0.001, Momentum: 0.9, Decay: 0.0005
+ If error occurs - run training with flag: -dont_show
+
+(average loss:1907): Gtk-WARNING **: cannot open display:
+(python3) ubuntu@ip-172-31-25-87:~/darknet$
+
+to see the mAP & Loss-chart during training on remote server without GUI, use command:
+./darknet detector train data/obj.data cfg/yolo-obj.cfg darknet53.conv.74
+./darknet detector train data/obj.data cfg/yolo-obj.cfg darknet53.conv.74 -dont_show -mjpeg_port 8090 -map
+then open URL http://54.190.27.97:8090 in Chrome/Firefox browser)
+
+source activate python3
+cd darknet
+./darknet detector train data/obj.data cfg/yolo-obj.cfg darknet53.conv.74 -dont_show
+./darknet detector train data/obj.data cfg/yolo-obj.cfg darknet53.conv.74 -dont_show -mjpeg_port 8090 -map
+
+Can't open label file. (This can be normal only if you use MSCOCO): data/obj/AB00001.txt
+
+ Wrong annotation: class_id = 2. But class_id should be [from 0 to 0]
+
+./darknet detector train data/obj.data cfg/yolo-obj.cfg darknet53.conv.74 -dont_show -gpus 0,1,2,3
+
+Only for small datasets sometimes better to decrease learning rate, for 4 GPUs set learning_rate = 0.00025 (i.e. learning_rate = 0.001 / GPUs).
+ In this case also increase 4x times burn_in = and max_batches = in your cfg-file. I.e. use burn_in = 4000 instead of 1000.
+
+8.1. For training with mAP (mean average precisions) calculation for each 4 Epochs (set valid=valid.txt or train.txt in obj.data file  ???? test = test.txt ???
+Note: If you changed width= or height= in your cfg-file, then new width and height must be divisible by 32.
+
+wget -P /home/ubuntu/darknet/data https://github.com/paddygoat/darknet/blob/master/data/obj.data
+wget -P /home/ubuntu/darknet/data https://github.com/paddygoat/darknet/blob/master/data/test.txt
+wget -P /home/ubuntu/darknet/data/cfg https://github.com/paddygoat/darknet/blob/master/cfg/yolo-obj.cfg
+
+./darknet detector train data/obj.data cfg/yolo-obj.cfg darknet53.conv.74 -dont_show -gpus 0,1,2,3
+./darknet detector train data/obj.data cfg/yolo-obj.cfg darknet53.conv.74 -dont_show -mjpeg_port 8090 -map
+
+http://34.217.179.132:8090
+
+Region 94 Avg IOU: -nan, Class: -nan, Obj: -nan, No Obj: 0.355157, .5R: -nan, .75R: -nan,  count: 0
+Region 106 Avg IOU: -nan, Class: -nan, Obj: -nan, No Obj: 0.242947, .5R: -nan, .75R: -nan,  count: 0
+Region 82 Avg IOU: 0.409650, Class: 0.478970, Obj: 0.430828, No Obj: 0.384286, .5R: 0.250000, .75R: 0.000000,  count: 8
+
+use $ nvidia-smi to check GPUs
+      $ watch -n0.1 nvidia-smi
+
+
+
