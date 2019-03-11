@@ -1,6 +1,5 @@
 
 source activate python3
-sourec activate pytorch_p36
 
 git clone https://github.com/paddygoat/darknet
 cd darknet
@@ -53,8 +52,6 @@ Can't open label file. (This can be normal only if you use MSCOCO): data/obj/AB0
 
  Wrong annotation: class_id = 2. But class_id should be [from 0 to 0]
 
-./darknet detector train data/obj.data cfg/yolo-obj.cfg darknet53.conv.74 -dont_show -gpus 0,1,2,3
-
 Only for small datasets sometimes better to decrease learning rate, for 4 GPUs set learning_rate = 0.00025 (i.e. learning_rate = 0.001 / GPUs).
  In this case also increase 4x times burn_in = and max_batches = in your cfg-file. I.e. use burn_in = 4000 instead of 1000.
 
@@ -68,7 +65,7 @@ wget -P /home/ubuntu/darknet/data/cfg https://github.com/paddygoat/darknet/blob/
 ./darknet detector train data/obj.data cfg/yolo-obj.cfg darknet53.conv.74 -dont_show -gpus 0,1,2,3
 ./darknet detector train data/obj.data cfg/yolo-obj.cfg darknet53.conv.74 -dont_show -mjpeg_port 8090 -map
 
-http://34.217.179.132:8090
+http://54.245.40.222:8090
 
 Region 94 Avg IOU: -nan, Class: -nan, Obj: -nan, No Obj: 0.355157, .5R: -nan, .75R: -nan,  count: 0
 Region 106 Avg IOU: -nan, Class: -nan, Obj: -nan, No Obj: 0.242947, .5R: -nan, .75R: -nan,  count: 0
@@ -77,5 +74,69 @@ Region 82 Avg IOU: 0.409650, Class: 0.478970, Obj: 0.430828, No Obj: 0.384286, .
 use $ nvidia-smi to check GPUs
       $ watch -n0.1 nvidia-smi
 
+delete old jpgs and txts in darknet/data/obj
+wget -P /home/ubuntu/darknet/data https://github.com/paddygoat/darknet/blob/master/build/darknet/x64/data/obj.data
+wget -P /home/ubuntu/darknet/data https://github.com/paddygoat/darknet/blob/master/build/darknet/x64/data/obj.names
+wget -P /home/ubuntu/darknet/data https://github.com/paddygoat/darknet/blob/master/build/darknet/x64/data/train.txt
+wget -P /home/ubuntu/darknet/data https://github.com/paddygoat/darknet/blob/master/build/darknet/x64/data/valid.txt
+wget -P /home/ubuntu/darknet/data https://github.com/paddygoat/darknet/blob/master/build/darknet/x64/data/test.txt
 
+https://www.kaggle.com/tegwyntwmffat/slug-detect/downloads/slug_images_and_txt_files_01.tar.gz
+
+cd darknet/data/obj
+tar -xvzf slug_images_and_txt_files_01.tar.gz
+./darknet detector train data/obj.data cfg/yolo-obj.cfg darknet53.conv.74 -dont_show -mjpeg_port 8090 -map
+
+ Tensor Cores are disabled until the first 3000 iterations are reached. (next mAP calculation at 1000 iterations)
+ 149: 52.033905, 95.407059 avg loss, 0.000000 rate, 4.756684 seconds, 9536 images
+ MJPEG-stream sent.
+Loaded: 0.000027 seconds
+Region 82 Avg IOU: 0.423813, Class: 0.523438, Obj: 0.195280, No Obj: 0.209835, .5R: 0.333333, .75R: 0.111111,  count: 9
+Region 94 Avg IOU: -nan, Class: -nan, Obj: -nan, No Obj: 0.103330, .5R: -nan, .75R: -nan,  count: 0
+Region 106 Avg IOU: -nan, Class: -nan, Obj: -nan, No Obj: 0.044443, .5R: -nan, .75R: -nan,  count: 0
+Region 82 Avg IOU: 0.438981, Class: 0.656168, Obj: 0.202069, No Obj: 0.208572, .5R: 0.375000, .75R: 0.000000,  count: 8
+
+darknet/backup/yolo-obj_last.weights
+darknet/backup/yolo-obj_1000.weights
+http://54.245.40.222:8090
+
+./darknet detector train data/obj.data cfg/yolo-obj.cfg backup/yolo-obj_1000.weights -dont_show -mjpeg_port 8090 -map
+
+source activate python3
+
+conda install -c conda-forge tensorflow 
+
+
+git clone https://github.com/mystic123/tensorflow-yolo-v3.git
+
+cd tensorflow-yolo-v3
+
+git checkout ed60b90
+
+
+
+source activate python3
+cd tensorflow-yolo-v3
+
+git checkout ed60b90
+
+
+
+python3 convert_weights.py --class_names /home/ubuntu/darknet/data/coco.names.txt --size 416 --data_format NHWC --weights_file /home/ubuntu/darknet/backup/yolo-obj_1000.weights --output_graph /home/ubuntu/darknet/backup  ......... Seemed to do something useful !!!!
+
+python3 convert_weights_pb.py --class_names /home/ubuntu/darknet/data/coco.names.txt --size 416 --data_format NHWC --weights_file /home/ubuntu/darknet/backup/yolo-obj_1000.weights .................. WORKED!
+
+RESULTS:
+(python3) ubuntu@ip-172-31-25-87:~/tensorflow-yolo-v3$ python3 convert_weights.py --class_names /home/ubuntu/darknet/data/coco.names.txt --size 416 --data_format NHWC --weights_file /home/ubuntu/darknet/backup/yolo-obj_1000.weights --output_graph /home/ubuntu/darknet/backup
+2019-03-11 10:41:59.937583: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+Model saved in path: ./saved_model/model.ckpt
+(python3) ubuntu@ip-172-31-25-87:~/tensorflow-yolo-v3$
+RESULTS:
+(python3) ubuntu@ip-172-31-25-87:~/tensorflow-yolo-v3$ python3 convert_weights_pb.py --class_names /home/ubuntu/darknet/data/coco.names.txt --size 416 --data_format NHWC --weights_file /home/ubuntu/darknet/backup/yolo-obj_1000.weights
+2019-03-11 10:47:47.185367: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+1330 ops written to frozen_darknet_yolov3_model.pb.
+(python3) ubuntu@ip-172-31-25-87:~/tensorflow-yolo-v3$
+
+coco.names.txt must contain 'person' only for one class.
+frozen model was found in /home/ubuntu/tensorflow-yolo-v3/  (.pb file)
 

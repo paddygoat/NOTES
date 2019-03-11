@@ -1,0 +1,60 @@
+CWFJ-W72RXCT2
+https://software.intel.com/en-us/articles/OpenVINO-Install-Linux
+
+
+tar -zxf l_openvino_toolkit_p_2018.5.455_online.tgz
+cd l_openvino_toolkit_p_2018.5.455_online
+sudo -E ./install_cv_sdk_dependencies.sh
+sudo ./install.sh
+
+cd opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer/install_prerequisites
+sudo ./install_prerequisites_tf.sh
+
+# model optimizer:
+
+cd /opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer/
+
+python3 mo_tf.py --input_model /home/ubuntu/tensorflow-yolo-v3/frozen_darknet_yolov3_model.pb --tensorflow_use_custom_operations_config /opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer/extensions/front/tf/yolo_v3.json --input_shape=[1,416,416,3] --data_type=FP32 ......... WORKS!
+
+http://54.203.29.28/home/ubuntu/tensorflow-yolo-v3/frozen_darknet_yolov3_model.pb
+
+http://54.203.29.28/opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer/extensions/front/tf/yolo_v3.json
+
+
+[ ERROR ]  The directory "/opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer/." is not writable
+
+If you want to make all the files in the current directory have all permissions type:
+chmod -R 777 ./
+
+sudo chmod 777 /opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer
+
+
+
+Model Optimizer version:        1.5.12.49d067a0
+[ ERROR ]
+Detected not satisfied dependencies:
+        tensorflow: not installed, required: 1.2.0
+
+Please install required versions of components or use install_prerequisites script
+/opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer/install_prerequisites/install_prerequisites_tf.sh
+Note that install_prerequisites scripts may install additional components.
+ubuntu@ip-172-31-25-87:/opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer$
+
+
+Model Optimizer version:        1.5.12.49d067a0
+[ ERROR ]  Both --input_model and --saved_model_dir are defined. Specify either input model or saved model directory.
+(python3) ubuntu@ip-172-31-25-87:/opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer$
+
+
+
+[ SUCCESS ] Generated IR model.
+[ SUCCESS ] XML file: /opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer/./frozen_darknet_yolov3_model.xml
+[ SUCCESS ] BIN file: /opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer/./frozen_darknet_yolov3_model.bin
+
+# model optimizer:
+source activate python3
+cd /opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer/
+python3 mo_tf.py --input_model /home/ubuntu/tensorflow-yolo-v3/frozen_darknet_yolov3_model.pb --tensorflow_use_custom_operations_config /opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer/extensions/front/tf/yolo_v3.json --input_shape=[1,416,416,3] --data_type=FP16   ........ WORKED!
+
+
+
