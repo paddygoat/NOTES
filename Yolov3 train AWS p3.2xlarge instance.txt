@@ -63,6 +63,8 @@ wget -P /home/ubuntu/darknet/data https://github.com/paddygoat/darknet/blob/mast
 wget -P /home/ubuntu/darknet/data/cfg https://github.com/paddygoat/darknet/blob/master/cfg/yolo-obj.cfg
 
 ./darknet detector train data/obj.data cfg/yolo-obj.cfg darknet53.conv.74 -dont_show -gpus 0,1,2,3
+AWS p3.2xlarge only has one Tesla V100 GPU !!!!!!
+
 ./darknet detector train data/obj.data cfg/yolo-obj.cfg darknet53.conv.74 -dont_show -mjpeg_port 8090 -map
 
 http://54.245.40.222:8090
@@ -102,8 +104,9 @@ http://54.245.40.222:8090
 
 ./darknet detector train data/obj.data cfg/yolo-obj.cfg backup/yolo-obj_1000.weights -dont_show -mjpeg_port 8090 -map
 
-source activate python3
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+source activate python3
 conda install -c conda-forge tensorflow 
 
 
@@ -112,8 +115,6 @@ git clone https://github.com/mystic123/tensorflow-yolo-v3.git
 cd tensorflow-yolo-v3
 
 git checkout ed60b90
-
-
 
 source activate python3
 cd tensorflow-yolo-v3
@@ -131,6 +132,7 @@ RESULTS:
 2019-03-11 10:41:59.937583: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
 Model saved in path: ./saved_model/model.ckpt
 (python3) ubuntu@ip-172-31-25-87:~/tensorflow-yolo-v3$
+
 RESULTS:
 (python3) ubuntu@ip-172-31-25-87:~/tensorflow-yolo-v3$ python3 convert_weights_pb.py --class_names /home/ubuntu/darknet/data/coco.names.txt --size 416 --data_format NHWC --weights_file /home/ubuntu/darknet/backup/yolo-obj_1000.weights
 2019-03-11 10:47:47.185367: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
@@ -139,4 +141,46 @@ RESULTS:
 
 coco.names.txt must contain 'person' only for one class.
 frozen model was found in /home/ubuntu/tensorflow-yolo-v3/  (.pb file)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+0. source activate python3
+1. Upload new yolo-obj.cfg file to 'cfg' directory
+2. delete 'obj' folder in darknet/data/
+3. Upload slug_images_and_txt_files_02.tar.gz to darknet/data/
+4. cd darknet/data/
+5. tar -xvzf slug_images_and_txt_files_02.tar.gz  ...... This will extract image and txt files to a new 'obj' folder
+6. delete darknet/backup/yolo-obj_1000.weights
+7. cd && cd darknet/
+
+8. ./darknet detector train data/obj.data cfg/yolo-obj.cfg backup/yolo-obj_1000.weights -dont_show -mjpeg_port 8090 -map ..... or.......   ./darknet detector train data/obj.data cfg/yolo-obj.cfg -dont_show -mjpeg_port 8090 -map  ...... or ........     ./darknet detector train data/obj.data cfg/yolo-obj.cfg backup/yolo-obj_last.weights -dont_show -mjpeg_port 8090
+
+http://54.187.176.168:8090 ...... open in chrome only.
+
+9. cd tensorflow-yolo-v3
+
+10. python3 convert_weights.py --class_names /home/ubuntu/darknet/data/coco.names.txt --size 416 --data_format NHWC --weights_file /home/ubuntu/darknet/backup/yolo-obj_4000.weights --output_graph /home/ubuntu/darknet/backup  ......... Seemed to do something useful !!!!
+
+11. python3 convert_weights_pb.py --class_names /home/ubuntu/darknet/data/coco.names.txt --size 416 --data_format NHWC --weights_file /home/ubuntu/darknet/backup/yolo-obj_4000.weights
+
+12. delete tensorflow-yolo-v3/frozen_darknet_yolov3_model.pb
+
+13.cd && cd /opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer/extensions/front/tf/
+14.sudo chmod 777 yolo_v3.json
+15.ls -l yolo_v3.json
+16. Edit yolo_v3.json accordingly.
+
+17. cd && cd /opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer/
+
+18. python3 mo_tf.py --input_model /home/ubuntu/tensorflow-yolo-v3/frozen_darknet_yolov3_model.pb --tensorflow_use_custom_operations_config /opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer/extensions/front/tf/yolo_v3.json --input_shape=[1,416,416,3] --data_type=FP16
+
+19. saved bin and xml at /opt/intel/computer_vision_sdk_2018.5.455/deployment_tools/model_optimizer/
+
+
+
+
+
+
+
+
+
 

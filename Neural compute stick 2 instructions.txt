@@ -672,6 +672,15 @@ cd ~/inference_engine_samples/intel64/Release
 cd ~/inference_engine_samples/intel64/Release
 ./object_detection_demo_ssd_async -d CPU -i cam -m /opt/intel/computer_vision_sdk_2018.5.445/deployment_tools/intel_models/person-detection-retail-0013/FP16/person-detection-retail-0013.xml
 
+cd /home/tegwyn/inference_engine_samples/intel64/Release
+./object_detection_demo_yolov3_async -t 0.7 -d MYRIAD -i cam -m /media/tegwyn/2037-F6FA/slugs/yolo/224_224_Training/frozen_darknet_yolov3_model.xml  ....... Worked but too many boxes
+
+cd /home/tegwyn/inference_engine_samples/intel64/Release
+./object_detection_demo_yolov3_async -t 0.7 -d MYRIAD -i cam -m /home/tegwyn/Desktop/slugs/224_224_Training/frozen_darknet_yolov3_model.xml
+
+
+
+
 
 
 
