@@ -1,0 +1,89 @@
+Step 1:  Sign up with AWS with your credit card and then visit the support section and ask them to enable a 'p3.2xlarge' instance - this is your Nvidia Tesla with a few CPUs and some storage space. Also, sign up with Nvidia NGU cloud and make a note of the API key they give you.
+
+Step 2: Use the 'Create instance wizard' in the US west 'Oregon' region regardless of where you actually live! (This is where the GPU lives). The wizard will guide you through everything required, including creating security keys.
+
+Step 3: Follow the wizard and select the 'Nvidia Volta' AMI in the Amazon marketplace. Don't worry, Nvidia has supplied it for free.
+
+Step 4: DO NOT assign an elastic IP as it's not necessary and Amazon will charge you for it on a per hour basis whether you're using the GPU or not. The only expense should be the GPU when you're actually using it.
+
+Step 5: Install a SHH client on computer such as PUTTY. I use PUTTY and WinSCP on a windows 10 machine. Both are very useful.
+
+Step 6: Launch your AWS instance and hit the 'start' button. Remember to this this off again as soon as finished as we're now being charged per minute. An IPv4 address should become displayed very quickly - if not, refresh the browser.
+
+Step 7: Launch WinSCP, use 'ubuntu' as your username and the IPv4 address from the above. Go to advanced settings and install your AWS key having previously set permissions on the key to read only or CHMOD 400.
+
+Step 8: Save the WinSCP session and press login. Sometimes the authentication key can cause a problem and on one occasion it locked me out of my instance permanently and I had to delete the current instance and create a new one. I now key my key on a USB stick rather than on windows machine. Also, if the AWS is stopped and started again, it assigns a new IPv4 address, so this needs to be updated in WinSCP accordingly.
+
+Step 9: Once logged in, create a directory structure in WinSCP for the images or photos to be processed. I created:
+/home/ubuntu/waspLarge for my project as I'm using photos of wasps in my experiments. The 'waspLarge' folder itself has the following directory structure:
+
+/waspLarge/train/images
+/waspLarge/train/labels
+/waspLarge/val/images
+/waspLarge/val/labels
+
+It is possible to copy and paste the whole directory structure and all the images and text files located inside in one go. Check out the dusty-nv inference tutorial for more info on how to use DIGITS.
+Also, copy and paste in the pre-trained model as below:
+
+/digitsJobs/bvlc_googlenet.caffemodel
+
+Step 10: Once set up with WinSCP, find the PUTTY icon and launch that. It should produce a terminal for entering commands.
+
+Step 11: First command is to pull an Nvidia container. I used: 
+
+$ docker pull nvcr.io/nvidia/digits:18.11-caffe
+
+ ….. But check here for the most up to date one: https://ngc.nvidia.com/catalog/containers?query=&quickFilter=&filters=&orderBy=
+
+Step 12: Run:
+$ nvidia-docker run -d --name digits-18.11-caffe -p 8888:5000  --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 nvcr.io/nvidia/digits:18.11-caffe
+
+…. to allocate memory effectively. This will create a new container called 'digits', as described by the --name command and print out the very long container name eg. e8956e9586bb1a5e842a3ab0c6fc79f29f8c1f735d1945347c92a918913d7fc7
+
+Step 13: Now, as a bit of an exercise, we're going to kill this container:
+$ docker kill e8956e9586bb1a5e842a3ab0c6fc79f29f8c1f735d1945347c92a918913d7fc7
+ ……. Trust me, we're going to need to know these Docker commands!
+
+Step 14: Now to make sure all previous containers are removed:
+$ docker rm $(docker ps -a -q)
+
+Step 15: Check that the inode limits have not been exceeded in the system:
+$ df -i  
+…….. It should look something like the below:
+Filesystem      Inodes  IUsed   IFree IUse% Mounted on
+udev           7858000    327 7857673    1% /dev
+tmpfs          7859998    469 7859529    1% /run
+/dev/xvda1     8192000 208669 7983331    3% /
+tmpfs          7859998      1 7859997    1% /dev/shm
+tmpfs          7859998      3 7859995    1% /run/lock
+tmpfs          7859998     16 7859982    1% /sys/fs/cgroup
+/dev/loop0       12808  12808       0  100% /snap/core/5897
+/dev/loop1          13     13       0  100% /snap/amazon-ssm-agent/295
+/dev/loop2       12847  12847       0  100% /snap/core/5145
+/dev/loop3          15     15       0  100% /snap/amazon-ssm-agent/930
+tmpfs          7859998      4 7859994    1% /run/user/1000
+
+….. More Docker commands can be found here: https://docs.docker.com/engine/reference/commandline/system/. $ df -h is also useful.
+
+Step 16: Now we're going to link all the stuff we did in step 9 to stuff going on inside the container. The way I came to understand the file system is using an analogy of the human brain where on one side we have 'conscious thought' and the other 'unconscious thought', which in this case is mostly hidden inside the container. Conscious thought is the directory structure we created using WinSCP. To link the two together we use a Docker 'mount' command -v, otherwise called volume, which is very confusing. Launching DIGITS is also explained here: https://docs.nvidia.com/deeplearning/digits/digits-container-getting-started/index.html, but I found it difficult to understand and it misses out some key steps.
+
+Step 17: If the directory structure is set up EXACTLY as in step 9 and it contains our photos and label files and pre-trained model in the correct place, we can run DIGITS and open it in a browser:
+$ nvidia-docker run  --rm --name digits -d -p 8888:5000 -v /home/ubuntu/waspLarge:/waspLarge -v /home/ubuntu/digitsJobs:/workspace/jobs nvcr.io/nvidia/digits:18.11-caffe
+…. This should now run a new container and print out another long container name.
+
+-it     ……. means run in interactive mode.     --rm      …….. means remove container when finished.   
+
+Step 18: DIGITS should now be running. Type your IPv4 address into the browser http input field (no 'http://' or 'www' required) then type ':8888' eg. 12.34.73.89:8888  . Hit return and you should see the DIGITS workspace.
+
+Step 19: Refer to my previous log for how to set up DIGITS and use the following in the labels and image boxes:
+
+/waspLarge/train/images
+/waspLarge/train/labels
+/waspLarge/val/images
+/waspLarge/val/labels
+
+Copy and paste in the deploy.network text as in my previous log and use the following as the path to pre-trained network:
+
+/workspace/jobs/bvlc_googlenet.caffemodel
+
+If you look at these paths and what we did in step 9, you should see the correlation!
