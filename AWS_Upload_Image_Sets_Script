@@ -1,24 +1,24 @@
 #!/bin/bash  
 echo "This is a shell script"  
 
-slugsBatch='slugs9999'  
-echo "$slugsBatch"
+seedlingsBatch='swede_2064'  
+echo "$seedlingsBatch"
 
 
 # load in the docker container:
-nvidia-docker run  --rm --name digits -d -p 8888:5000 -v /home/ubuntu/slugs7245:/slugs7245 -v /home/ubuntu/digitsJobs:/workspace/jobs nvcr.io/nvidia/digits:19.03-caffe
+nvidia-docker run  --rm --name digits -d -p 8888:5000 -v /home/ubuntu/swede_2064:/swede_2064 -v /home/ubuntu/digitsJobs:/workspace/jobs nvcr.io/nvidia/digits:19.03-caffe
 
 # delete the previous data folder to free up space:
 # rm -rf slugs7245
 rm -rf slugs9999
 
 # create new folder:
-mkdir $slugsBatch
-cd $slugsBatch
+mkdir $seedlingsBatch
+cd $seedlingsBatch
 
 # download new data sets from google drive:
 export fileid=1CPhS7NppIMSw304ikztv2FTMTFE0LbD6
-export filename=goatlogosmall.tar.gz
+export filename=swede_2064.tar.gz
 
 wget --save-cookies cookies.txt 'https://docs.google.com/uc?export=download&id='$fileid -O- \
      | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1/p' > confirm.txt
@@ -27,15 +27,15 @@ wget --load-cookies cookies.txt -O $filename \
      'https://docs.google.com/uc?export=download&id='$fileid'&confirm='$(<confirm.txt)
 
 rm -f confirm.txt cookies.txt
-tar -xvzf goatlogosmall.tar.gz
-rm -f goatlogosmall.tar.gz
+tar -xvzf swede_2064.tar.gz
+rm -f swede_2064.tar.gz
 # there should now be train and val folders in slugs9999 folder.
  
 echo ""
-echo "/"$slugsBatch"/train/images"
-echo "/"$slugsBatch"/train/labels"
-echo "/"$slugsBatch"/val/images"
-echo "/"$slugsBatch"/val/labels"
+echo "/"$seedlingsBatch"/train/images"
+echo "/"$seedlingsBatch"/train/labels"
+echo "/"$seedlingsBatch"/val/images"
+echo "/"$seedlingsBatch"/val/labels"
 echo ""
 echo " ... DONE !!!!" 
 
