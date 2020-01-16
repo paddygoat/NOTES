@@ -129,9 +129,11 @@ make -j"$(nproc)"
 	endif()if()
 
 make install
+make pycaffe
 
 
-pip install wheel
+
+pip2 install wheel
 then
 python setup.py bdist_wheel 
 
@@ -142,13 +144,14 @@ python setup.py bdist_wheel
                         ^
     SyntaxError: invalid syntax
 
-pip3 install pydot --user
+pip install pydot --user
 
 cd
 DIGITS_ROOT=~/digits
 git clone https://github.com/NVIDIA/DIGITS.git $DIGITS_ROOT
 
-pip install -r $DIGITS_ROOT/requirements.txt --user
+sudo pip install -r $DIGITS_ROOT/requirements.txt --user
+sudo pip2 install -r $DIGITS_ROOT/requirements.txt --user
 pydot>=1.0.28,<=1.0.29  ..... delete this line in requirements.txt above.
 numpy>=1.8.1,<=1.14.0   ... Removed from above
 
@@ -162,16 +165,26 @@ ERROR: pandas 0.25.3 has requirement python-dateutil>=2.6.1, but you'll have pyt
 ERROR: markdown 3.1.1 has requirement setuptools>=36, but you'll have setuptools 20.7.0 which is incompatible.
 ERROR: uff 0.6.3 has requirement protobuf>=3.3.0, but you'll have protobuf 3.2.0 which is incompatible.
 
-pip install requests --user
+sudo pip install requests --user
+pip2 install requests
+ImportError: No module named flask_socketio
+pip2 install flask_socketio
+sudo pip install flask_socketio
+pip2 install psutil
+pip2 install skfmm
+pip2 install scikit-fmm
+pip2 install --upgrade scikit-image
+
 
 python
-import skimage.io
+import skimage.iocd
 import requests
 
 error: invalid command 'bdist_wheel'
-
+DIGITS_ROOT=~/digits
+############################################################
 pip install -e $DIGITS_ROOT --user
-
+############################################################
 export CAFFE_ROOT=/home/nvidia/caffe
 export PYTHONPATH=/home/nvidia/caffe/python:$PYTHONPATH
 
