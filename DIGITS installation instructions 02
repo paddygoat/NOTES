@@ -8,6 +8,7 @@ sudo ~/jetson_clocks.sh && sudo nvpmodel -m0
 
 Firstly, check instructions here: https://docs.nvidia.com/deeplearning/digits/digits-installation/index.html
 Then: https://github.com/NVIDIA/DIGITS/blob/master/docs/BuildDigits.md
+or https://docs.nvidia.com/deeplearning/digits/digits-installation/index.html
 
 # Download new list of packages
 sudo apt-get update
@@ -20,10 +21,11 @@ sudo apt-get install autoconf automake libtool curl make g++ git python-dev pyth
 
                ------------------DONE------------------------------
 
-DIGITS is currently (september 2018) compatiable with Protobuf 3.2.x:
+DIGITS is currently (October 2019) compatiable with Protobuf 3.2.x:
 
 export PROTOBUF_ROOT=~/protobuf
 git clone https://github.com/google/protobuf.git $PROTOBUF_ROOT -b '3.2.x'
+# Might need to install protobuf 3.6 to run tensorboard properly.
 cd $PROTOBUF_ROOT
 ./autogen.sh
 ./configure
@@ -43,17 +45,24 @@ sudo apt-get install --no-install-recommends build-essential cmake git gfortran 
 sudo apt-get install libboost-system-dev libboost-thread-dev libgflags-dev libgoogle-glog-dev libhdf5-serial-dev libleveldb-dev liblmdb-dev libopencv-dev libsnappy-dev python-all-dev python-dev python-h5py python-matplotlib python-numpy python-opencv python-pil python-pip python-pydot python-scipy python-skimage python-sklearn
 
               ----------------- DONE --------------------------
+	      
+sudo apt-get install libturbojpeg
+sudo ln -s /usr/lib/x86_64-linux-gnu/libturbojpeg.so.0.1.0 /usr/lib/x86_64-linux-gnu/libturbojpeg.so
+failed to create symbolic link '/usr/lib/x86_64-linux-gnu/libturbojpeg.so': No such file or directory
+
 
 export CAFFE_ROOT=~/caffe
 git clone https://github.com/NVIDIA/caffe.git $CAFFE_ROOT -b 'caffe-0.15'
 
               ------------- Done ------------------------------
 
-pip install Cython
+pip3 install Cython --user
 
 sudo apt-get install libfreetype6-dev 
 sudo apt-get install pkg-config
 sudo apt-get install libpng12-dev
+E: Package 'libpng12-dev' has no installation candidate
+
 sudo pip install --upgrade setuptools
 
 sudo apt install python3-pip
@@ -72,8 +81,25 @@ Please edit file $CAFFE_ROOT/3rdparty/cub/host/mutex.cuh
 line124: --- #ifndef __arm__
 line124: +++ #if !defined(__arm__) && !defined(__aarch64__)
 
-cd /home/nvidia/protobuf/cmake
+In the new version of cmake (eg: 3.16.2), to install, download tar file from https://cmake.org/download/. 
+Extract the downloaded tar file and then:
+
+sudo apt-get install libssl-dev
+
+cd /home/tegwyn/Downloads/cmake-3.16.2
+cd $CMAKE_DOWNLOAD_PATH
+./configure
+make
+sudo make install
+cmake --version 
+
+cd /home/nvidia/protobuf/cmake  .... or .... 
+cd /home/tegwyn/protobuf/cmake
 cmake -DBLAS=open
+
+Please edit "caffe/cmake/Dependencies.cmake", at/near line 28
+---  list(APPEND Caffe_LINKER_LIBS ${HDF5_LIBRARIES})
++++  list(APPEND Caffe_LINKER_LIBS ${HDF5_LIBRARIES} ${HDF5_HL_LIBRARIES})
 
 cd $CAFFE_ROOT
 mkdir build
@@ -105,13 +131,35 @@ pip install wheel
 then
 python setup.py bdist_wheel 
 
+      File "/tmp/pip-install-ee4mtctz/pydot/setup.py", line 6, in <module>
+        import pydot
+      File "/tmp/pip-install-ee4mtctz/pydot/pydot.py", line 31
+        except Exception, e:
+                        ^
+    SyntaxError: invalid syntax
+
+pip3 install pydot --user
+
 cd
 DIGITS_ROOT=~/digits
 git clone https://github.com/NVIDIA/DIGITS.git $DIGITS_ROOT
 
-pip install -r $DIGITS_ROOT/requirements.txt --user
+pip3 install -r $DIGITS_ROOT/requirements.txt --user
+pydot>=1.0.28,<=1.0.29  ..... delete this line in requirements.txt above.
 
-  error: invalid command 'bdist_wheel'
+ERROR: jupyter-client 5.3.1 has requirement python-dateutil>=2.1, but you'll have python-dateutil 1.5 which is incompatible.
+ERROR: jsonschema 3.0.2 has requirement six>=1.11.0, but you'll have six 1.10.0 which is incompatible.
+ERROR: tensorflow-gpu 1.14.0+nv19.7 has requirement numpy<2.0,>=1.14.5, but you'll have numpy 1.14.0 which is incompatible.
+ERROR: tensorflow-gpu 1.14.0+nv19.7 has requirement protobuf>=3.6.1, but you'll have protobuf 3.2.0 which is incompatible.
+ERROR: tensorboard 1.14.0 has requirement protobuf>=3.6.0, but you'll have protobuf 3.2.0 which is incompatible.
+ERROR: tensorboard 1.14.0 has requirement setuptools>=41.0.0, but you'll have setuptools 20.7.0 which is incompatible.
+ERROR: pandas 0.25.3 has requirement python-dateutil>=2.6.1, but you'll have python-dateutil 1.5 which is incompatible.
+ERROR: markdown 3.1.1 has requirement setuptools>=36, but you'll have setuptools 20.7.0 which is incompatible.
+ERROR: uff 0.6.3 has requirement protobuf>=3.3.0, but you'll have protobuf 3.2.0 which is incompatible.
+
+
+
+error: invalid command 'bdist_wheel'
 
 pip install -e $DIGITS_ROOT --user
 
